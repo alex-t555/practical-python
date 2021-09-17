@@ -166,7 +166,7 @@
 #             try:
 #                 dout[row[0]] = float(row[1])
 #             except IndexError as err:
-#                 print(f'Warning: {err}',
+#                 print(f'\nWarning: {err}',
 #                       f'\n  File: \"{filename}\", line {i+1}',
 #                       f'\n    ({row})')
 #     return dout
@@ -183,9 +183,357 @@
 # and compute the current value of the portfolio along with the gain/loss.
 #------------------------------------------------------------------------------
 
+# import os.path
+# import csv
+# from pprint import pprint
+
+
+# def read_portfolio(filename: str) -> list:
+#     '''Read a portfolio file'''
+#     portfolio_ = []
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         _ = next(rows)
+#         for row in rows:
+#             drow = {
+#                 'name': row[0],
+#                 'shares': int(row[1]),
+#                 'price': float(row[2])
+#             }
+#             portfolio_.append(drow)
+#     return portfolio_
+
+
+# def read_prices(filename: str) -> dict:
+#     '''Read a prices file'''
+#     dout = {}
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         for i, row in enumerate(rows):
+#             try:
+#                 dout[row[0]] = float(row[1])
+#             except IndexError as err:
+#                 print(f'\nWarning: {err}',
+#                       f'\n  File \"{filename}\", line {i+1}',
+#                       f'\n    ({row})')
+#     return dout
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+# FILE_PRICES = BASE + 'Data/prices.csv'
+
+# portfolio = read_portfolio(FILE_PORTFOLIO)
+# prices = read_prices(FILE_PRICES)
+
+# gain_loss = {}
+# for name, price in prices.items():
+#     for stock in portfolio:
+#         if stock['name'] == name:
+#             gain_loss[name] = gain_loss.setdefault(name, 0) \
+#                     + (price - stock['price']) * stock['shares']
+
+# print('\nGain/loss:')
+# pprint(gain_loss)
+
+
+###############################################################################
+# Exercise 2.9: Collecting Data
+# In Exercise 2.7, you wrote a program called report.py that computed the
+# gain/loss of a stock portfolio. In this exercise, you’re going to start
+# modifying it to produce a table like this:
+
+#       Name     Shares      Price     Change
+# ---------- ---------- ---------- ----------
+#         AA        100       9.22     -22.98
+#        IBM         50     106.28      15.18
+#        CAT        150      35.46     -47.98
+#       MSFT        200      20.89     -30.34
+#         GE         95      13.48     -26.89
+#       MSFT         50      20.89     -44.21
+#        IBM        100     106.28      35.84
+
+# In this report, “Price” is the current share price of the stock and “Change”
+# is the change in the share price from the initial purchase price.
+
+# In order to generate the above report, you’ll first want to collect all of
+# the data shown in the table. Write a function make_report() that takes a list
+# of stocks and dictionary of prices as input and returns a list of tuples
+# containing the rows of the above table.
+
+# Add this function to your report.py file. Here’s how it should work if you
+# try it interactively:
+
+# >>> portfolio = read_portfolio('Data/portfolio.csv')
+# >>> prices = read_prices('Data/prices.csv')
+# >>> report = make_report(portfolio, prices)
+# >>> for r in report:
+#         print(r)
+
+# ('AA', 100, 9.22, -22.980000000000004)
+# ('IBM', 50, 106.28, 15.180000000000007)
+# ('CAT', 150, 35.46, -47.98)
+# ('MSFT', 200, 20.89, -30.339999999999996)
+# ('GE', 95, 13.48, -26.889999999999997)
+# ...
+# >>>
+#------------------------------------------------------------------------------
+
+# import os.path
+# import csv
+# from pprint import pprint
+
+
+# def read_portfolio(filename: str) -> list:
+#     '''Read a portfolio file'''
+#     portfolio_ = []
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         _ = next(rows)
+#         for row in rows:
+#             drow = {
+#                 'name': row[0],
+#                 'shares': int(row[1]),
+#                 'price': float(row[2])
+#             }
+#             portfolio_.append(drow)
+#     return portfolio_
+
+
+# def read_prices(filename: str) -> dict:
+#     '''Read a prices file'''
+#     dout = {}
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         for i, row in enumerate(rows):
+#             try:
+#                 dout[row[0]] = float(row[1])
+#             except IndexError as err:
+#                 print(f'\nWarning: {err}',
+#                       f'\n  File \"{filename}\", line {i+1}',
+#                       f'\n    ({row})')
+#     return dout
+
+
+# def make_report(portfolio_: list, prices_: dict) -> list:
+#     '''Make report'''
+#     res = []
+#     for stock in portfolio_:
+#         res.append((stock['name'], stock['shares'], prices_[stock['name']],
+#                     round(prices_[stock['name']]-stock['price'], 2)))
+#     return res
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+# FILE_PRICES = BASE + 'Data/prices.csv'
+
+# portfolio = read_portfolio(FILE_PORTFOLIO)
+# prices = read_prices(FILE_PRICES)
+# report = make_report(portfolio, prices)
+
+# print('\nReport:')
+# pprint(report)
+
+
+###############################################################################
+# Exercise 2.10: Printing a formatted table
+# Redo the for-loop in Exercise 2.9, but change the print statement to format
+# the tuples.
+
+# >>> for r in report:
+#         print('%10s %10d %10.2f %10.2f' % r)
+
+#           AA        100       9.22     -22.98
+#          IBM         50     106.28      15.18
+#          CAT        150      35.46     -47.98
+#         MSFT        200      20.89     -30.34
+# ...
+# >>>
+
+# You can also expand the values and use f-strings. For example:
+
+# >>> for name, shares, price, change in report:
+#         print(f'{name:>10s} {shares:>10d} {price:>10.2f} {change:>10.2f}')
+
+#           AA        100       9.22     -22.98
+#          IBM         50     106.28      15.18
+#          CAT        150      35.46     -47.98
+#         MSFT        200      20.89     -30.34
+# ...
+# >>>
+
+# Take the above statements and add them to your report.py program. Have your
+# program take the output of the make_report() function and print a nicely
+# formatted table as shown.
+#------------------------------------------------------------------------------
+
+# import os.path
+# import csv
+
+
+# def read_portfolio(filename: str) -> list:
+#     '''Read a portfolio file'''
+#     portfolio_ = []
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         _ = next(rows)
+#         for row in rows:
+#             drow = {
+#                 'name': row[0],
+#                 'shares': int(row[1]),
+#                 'price': float(row[2])
+#             }
+#             portfolio_.append(drow)
+#     return portfolio_
+
+
+# def read_prices(filename: str) -> dict:
+#     '''Read a prices file'''
+#     dout = {}
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         for i, row in enumerate(rows):
+#             try:
+#                 dout[row[0]] = float(row[1])
+#             except IndexError as err:
+#                 print(f'\nWarning: {err}',
+#                       f'\n  File \"{filename}\", line {i+1}',
+#                       f'\n    ({row})')
+#     return dout
+
+
+# def make_report(portfolio_: list, prices_: dict) -> list:
+#     '''Make report'''
+#     res = []
+#     for stock in portfolio_:
+#         res.append((stock['name'], stock['shares'], prices_[stock['name']],
+#                     round(prices_[stock['name']]-stock['price'], 2)))
+#     return res
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+# FILE_PRICES = BASE + 'Data/prices.csv'
+
+# portfolio = read_portfolio(FILE_PORTFOLIO)
+# prices = read_prices(FILE_PRICES)
+# report = make_report(portfolio, prices)
+
+# print('\nReport:')
+# for name, shares, price, change in report:
+#     print(f'{name:>10s} {shares:>10d} {price:>10.2f} {change:>10.2f}')
+
+
+###############################################################################
+# Exercise 2.11: Adding some headers
+# Suppose you had a tuple of header names like this:
+
+# headers = ('Name', 'Shares', 'Price', 'Change')
+
+# Add code to your program that takes the above tuple of headers and creates a
+# string where each header name is right-aligned in a 10-character wide field
+# and each field is separated by a single space.
+
+# '      Name     Shares      Price      Change'
+
+# Write code that takes the headers and creates the separator string between
+# the headers and data to follow. This string is just a bunch of “-“ characters
+# under each field name. For example:
+
+# '---------- ---------- ---------- -----------'
+
+# When you’re done, your program should produce the table shown at the top of
+# this exercise.
+
+#       Name     Shares      Price     Change
+# ---------- ---------- ---------- ----------
+#         AA        100       9.22     -22.98
+#        IBM         50     106.28      15.18
+#        CAT        150      35.46     -47.98
+#       MSFT        200      20.89     -30.34
+#         GE         95      13.48     -26.89
+#       MSFT         50      20.89     -44.21
+#        IBM        100     106.28      35.84
+#------------------------------------------------------------------------------
+
+# import os.path
+# import csv
+
+
+# def read_portfolio(filename: str) -> list:
+#     '''Read a portfolio file'''
+#     portfolio_ = []
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         _ = next(rows)
+#         for row in rows:
+#             drow = {
+#                 'name': row[0],
+#                 'shares': int(row[1]),
+#                 'price': float(row[2])
+#             }
+#             portfolio_.append(drow)
+#     return portfolio_
+
+
+# def read_prices(filename: str) -> dict:
+#     '''Read a prices file'''
+#     dout = {}
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         for i, row in enumerate(rows):
+#             try:
+#                 dout[row[0]] = float(row[1])
+#             except IndexError as err:
+#                 print(f'\nWarning: {err}',
+#                       f'\n  File \"{filename}\", line {i+1}',
+#                       f'\n    ({row})')
+#     return dout
+
+
+# def make_report(portfolio_: list, prices_: dict) -> list:
+#     '''Make report'''
+#     res = []
+#     for stock in portfolio_:
+#         res.append((stock['name'], stock['shares'], prices_[stock['name']],
+#                     round(prices_[stock['name']]-stock['price'], 2)))
+#     return res
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+# FILE_PRICES = BASE + 'Data/prices.csv'
+
+# portfolio = read_portfolio(FILE_PORTFOLIO)
+# prices = read_prices(FILE_PRICES)
+# report = make_report(portfolio, prices)
+
+# print('\nReport:')
+# print('{:>10s} {:>10s} {:>10s} {:>10s}'\
+#       .format('Name', 'Shares', 'Price', 'Change'))
+# print(('-'*10+' ')*4)
+# for name, shares, price, change in report:
+#     print(f'{name:>10s} {shares:>10d} {price:>10.2f} {change:>10.2f}')
+
+
+###############################################################################
+# Exercise 2.12: Formatting Challenge
+# How would you modify your code so that the price includes the currency symbol ($) and the output looks like this:
+
+#       Name     Shares      Price     Change
+# ---------- ---------- ---------- ----------
+#         AA        100      $9.22     -22.98
+#        IBM         50    $106.28      15.18
+#        CAT        150     $35.46     -47.98
+#       MSFT        200     $20.89     -30.34
+#         GE         95     $13.48     -26.89
+#       MSFT         50     $20.89     -44.21
+#        IBM        100    $106.28      35.84
+#------------------------------------------------------------------------------
+
 import os.path
 import csv
-from pprint import pprint
 
 
 def read_portfolio(filename: str) -> list:
@@ -209,15 +557,23 @@ def read_prices(filename: str) -> dict:
     dout = {}
     with open(filename, 'rt') as fi:
         rows = csv.reader(fi)
-        _ = next(rows)
         for i, row in enumerate(rows):
             try:
                 dout[row[0]] = float(row[1])
             except IndexError as err:
-                print(f'Warning: {err}',
+                print(f'\nWarning: {err}',
                       f'\n  File \"{filename}\", line {i+1}',
                       f'\n    ({row})')
     return dout
+
+
+def make_report(portfolio_: list, prices_: dict) -> list:
+    '''Make report'''
+    res = []
+    for stock in portfolio_:
+        res.append((stock['name'], stock['shares'], prices_[stock['name']],
+                    round(prices_[stock['name']]-stock['price'], 2)))
+    return res
 
 
 BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
@@ -226,16 +582,15 @@ FILE_PRICES = BASE + 'Data/prices.csv'
 
 portfolio = read_portfolio(FILE_PORTFOLIO)
 prices = read_prices(FILE_PRICES)
+report = make_report(portfolio, prices)
 
-gain_loss = {}
-for name, price in prices.items():
-    for stock in portfolio:
-        if stock['name'] == name:
-            gain_loss[name] = gain_loss.setdefault(name, 0) \
-                    + (price - stock['price']) * stock['shares']
-
-print('\nGain/loss:')
-pprint(gain_loss)
+print('\nReport:')
+print('{:>10s} {:>10s} {:>10s} {:>10s}'\
+      .format('Name', 'Shares', 'Price', 'Change'))
+print(('-'*10+' ')*4)
+for name, shares, price, change in report:
+    print(f"{name:>10s} {shares:>10d}",
+          f"{'$'+str(round(price, 2)):>10s} {change:>10.2f}")
 
 
 ###############################################################################
