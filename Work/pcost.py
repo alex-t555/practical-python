@@ -1,7 +1,7 @@
 """ pcost.py
 """
 
-################################################################################
+###############################################################################
 # Exercise 1.27
 # Now that you know how to read a file, let’s write a program to perform a
 # simple calculation.
@@ -37,7 +37,7 @@
 # print("\nTotal cost:", total_sum)
 
 
-################################################################################
+###############################################################################
 # Exercise 1.28: Other kinds of “files”
 # What if you wanted to read a non-text file such as a gzip-compressed
 # datafile? The builtin open() function won’t help you here, but Python has a
@@ -72,7 +72,7 @@
 #         print(line, end='')
 
 
-################################################################################
+###############################################################################
 # Exercise 1.30: Turning a script into a function
 # Take the code you wrote for the pcost.py program in Exercise 1.27 and turn
 # it into a function portfolio_cost(filename). This function takes a filename
@@ -99,7 +99,7 @@
 # print('\nTotal cost:', total_cost)
 
 
-################################################################################
+###############################################################################
 # Exercise 1.31: Error handling
 # What happens if you try your function on a file with some missing fields?
 
@@ -143,7 +143,7 @@
 # print('\nTotal cost:', total_cost)
 
 
-################################################################################
+###############################################################################
 # Exercise 1.32: Using a library function
 # Python comes with a large standard library of useful functions. One library
 # that might be useful here is the csv module. You should use it whenever you
@@ -203,7 +203,7 @@
 # print('\nTotal cost:', total_cost)
 
 
-################################################################################
+###############################################################################
 # Exercise 1.33: Reading from the command line
 # In the pcost.py program, the name of the input file has been hardwired into
 # the code:
@@ -252,28 +252,198 @@
     # bash %
 #------------------------------------------------------------------------------
 
+# import sys
+# import os.path
+# import csv
+
+
+# def portfolio_cost(file_name: str) -> float:
+#     total = 0.0
+#     with open(file_name, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         _ = next(rows)
+#         cnt = 1
+#         for row in rows:
+#             cnt += 1
+#             try:
+#                 total += float(row[1]) * float(row[2])
+#             except ValueError as err:
+#                 print(f"Warning: {err} (line: {cnt}) ({row})")
+#     return total
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PATH = BASE + 'Data/portfolio.csv'
+
+# if len(sys.argv) == 2:
+#     filename = BASE + sys.argv[1]
+# else:
+#     filename = FILE_PATH
+
+# total_cost = portfolio_cost(filename)
+# print('\nTotal cost:', total_cost)
+
+
+###############################################################################
+# Exercise 2.15: A practical enumerate() example
+# Recall that the file Data/missing.csv contains data for a stock portfolio,
+# but has some rows with missing data. Using enumerate(), modify your pcost.py
+# program so that it prints a line number with the warning message when it
+# encounters bad input.
+
+# >>> cost = portfolio_cost('Data/missing.csv')
+# Row 4: Couldn't convert: ['MSFT', '', '51.23']
+# Row 7: Couldn't convert: ['IBM', '', '70.44']
+# >>>
+# To do this, you’ll need to change a few parts of your code.
+
+# ...
+# for rowno, row in enumerate(rows, start=1):
+#     try:
+#         ...
+#     except ValueError:
+#         print(f'Row {rowno}: Bad row: {row}')
+#------------------------------------------------------------------------------
+
+# import sys
+# import os.path
+# import csv
+
+
+# def portfolio_cost(file_name: str) -> float:
+#     total = 0.0
+#     with open(file_name, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         _ = next(rows)
+#         for rowno, row in enumerate(rows, start=2):
+#             try:
+#                 total += int(row[1]) * float(row[2])
+#             except ValueError as err:
+#                 print(f"\nWarning: {err} (line {rowno}) ({row})")
+#     return total
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PATH = BASE + 'Data/portfolio.csv'
+
+# if len(sys.argv) == 2:
+#     filename = BASE + sys.argv[1]
+# else:
+#     filename = FILE_PATH
+
+# total_cost = portfolio_cost(filename)
+# print('\nTotal cost:', total_cost)
+
+
+###############################################################################
+# Exercise 2.16: Using the zip() function
+# In the file Data/portfolio.csv, the first line contains column headers. In
+# all previous code, we’ve been discarding them.
+
+# >>> f = open('Data/portfolio.csv')
+# >>> rows = csv.reader(f)
+# >>> headers = next(rows)
+# >>> headers
+# ['name', 'shares', 'price']
+# >>>
+
+# However, what if you could use the headers for something useful? This is
+# where the zip() function enters the picture. First try this to pair the file
+# headers with a row of data:
+
+# >>> row = next(rows)
+# >>> row
+# ['AA', '100', '32.20']
+# >>> list(zip(headers, row))
+# [ ('name', 'AA'), ('shares', '100'), ('price', '32.20') ]
+# >>>
+
+# Notice how zip() paired the column headers with the column values. We’ve used
+# list() here to turn the result into a list so that you can see it. Normally,
+# zip() creates an iterator that must be consumed by a for-loop.
+
+# This pairing is an intermediate step to building a dictionary. Now try this:
+
+# >>> record = dict(zip(headers, row))
+# >>> record
+# {'price': '32.20', 'name': 'AA', 'shares': '100'}
+# >>>
+
+# This transformation is one of the most useful tricks to know about when
+# processing a lot of data files. For example, suppose you wanted to make the
+# pcost.py program work with various input files, but without regard for the
+# actual column number where the name, shares, and price appear.
+
+# Modify the portfolio_cost() function in pcost.py so that it looks like this:
+
+# # pcost.py
+
+# def portfolio_cost(filename):
+#     ...
+#         for rowno, row in enumerate(rows, start=1):
+#             record = dict(zip(headers, row))
+#             try:
+#                 nshares = int(record['shares'])
+#                 price = float(record['price'])
+#                 total_cost += nshares * price
+#             # This catches errors in int() and float() conversions above
+#             except ValueError:
+#                 print(f'Row {rowno}: Bad row: {row}')
+#         ...
+
+# Now, try your function on a completely different data file
+# Data/portfoliodate.csv which looks like this:
+
+# name,date,time,shares,price
+# "AA","6/11/2007","9:50am",100,32.20
+# "IBM","5/13/2007","4:20pm",50,91.10
+# "CAT","9/23/2006","1:30pm",150,83.44
+# "MSFT","5/17/2007","10:30am",200,51.23
+# "GE","2/1/2006","10:45am",95,40.37
+# "MSFT","10/31/2006","12:05pm",50,65.10
+# "IBM","7/9/2006","3:15pm",100,70.44
+
+# >>> portfolio_cost('Data/portfoliodate.csv')
+# 44671.15
+# >>>
+
+# If you did it right, you’ll find that your program still works even though
+# the data file has a completely different column format than before. That’s
+# cool!
+
+# The change made here is subtle, but significant. Instead of portfolio_cost()
+# being hardcoded to read a single fixed file format, the new version reads any
+# CSV file and picks the values of interest out of it. As long as the file has
+# the required columns, the code will work.
+
+# Modify the report.py program you wrote in Section 2.3 so that it uses the
+# same technique to pick out column headers.
+
+# Try running the report.py program on the Data/portfoliodate.csv file and see
+# that it produces the same answer as before.
+#------------------------------------------------------------------------------
+
 import sys
 import os.path
 import csv
 
 
-BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
-FILE_PATH = BASE + 'Data/portfolio.csv'
-
 def portfolio_cost(file_name: str) -> float:
     total = 0.0
     with open(file_name, 'rt') as fi:
         rows = csv.reader(fi)
-        _ = next(rows)
-        cnt = 1
-        for row in rows:
-            cnt += 1
+        headers = next(rows)
+        for rowno, row in enumerate(rows, start=2):
+            record = dict(zip(headers, row))
             try:
-                total += float(row[1]) * float(row[2])
+                total += int(record['shares']) * float(record['price'])
             except ValueError as err:
-                print(f"Warning: {err} (line: {cnt}) ({row})")
+                print(f"\nWarning: {err} (line {rowno}) ({row})")
     return total
 
+
+BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+FILE_PATH = BASE + 'Data/portfolio.csv'
 
 if len(sys.argv) == 2:
     filename = BASE + sys.argv[1]
@@ -283,5 +453,11 @@ else:
 total_cost = portfolio_cost(filename)
 print('\nTotal cost:', total_cost)
 
+filename = BASE + 'Data/portfoliodate.csv'
+total_cost = portfolio_cost(filename)
+print('\nTotal cost:', total_cost)
 
-################################################################################
+
+###############################################################################
+
+###############################################################################
