@@ -681,6 +681,209 @@
 # that it produces the same answer as before.
 #------------------------------------------------------------------------------
 
+# import os.path
+# import csv
+
+
+# def read_portfolio(filename: str) -> list:
+#     '''Read a portfolio file'''
+#     portfolio_ = []
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         headers = next(rows)
+#         for rowno, row in enumerate(rows, start=2):
+#             try:
+#                 i = headers.index('shares')
+#                 j = headers.index('price')
+#                 row[i] = int(row[i])
+#                 row[j] = float(row[j])
+#             except (ValueError, IndexError) as err:
+#                 print(f'\nWarning: {err}',
+#                       f'\n  File \"{filename}\", line {rowno}',
+#                       f'\n    ({row})')
+#                 continue
+#             record = dict(zip(headers, row))
+#             portfolio_.append(record)
+#     return portfolio_
+
+
+# def read_prices(filename: str) -> dict:
+#     '''Read a prices file'''
+#     prices_ = {}
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         for rowno, row in enumerate(rows, start=1):
+#             try:
+#                 prices_[row[0]] = float(row[1])
+#             except IndexError as err:
+#                 print(f'\nWarning: {err}',
+#                       f'\n  File \"{filename}\", line {rowno}',
+#                       f'\n    ({row})')
+#     return prices_
+
+
+# def make_report(portfolio_: list, prices_: dict) -> list:
+#     '''Make report'''
+#     res = []
+#     for stock in portfolio_:
+#         try:
+#             res.append((stock['name'], stock['shares'], prices_[stock['name']],
+#                         round(prices_[stock['name']]-stock['price'], 2)))
+#         except KeyError as err:
+#             print(f'\nWarning: {err}',
+#                   f'\n  ({stock})')
+#     return res
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+# FILE_PORTFOLIODATE = BASE + 'Data/portfoliodate.csv'
+# FILE_PRICES = BASE + 'Data/prices.csv'
+
+# prices = read_prices(FILE_PRICES)
+
+# portfolio = read_portfolio(FILE_PORTFOLIO)
+# report = make_report(portfolio, prices)
+
+# print('\nReport:')
+# print('{:>10s} {:>10s} {:>10s} {:>10s}'\
+#     .format('Name', 'Shares', 'Price', 'Change'))
+# print(('-'*10+' ')*4)
+# for name, shares, price, change in report:
+#     print(f"{name:>10s} {shares:>10d}",
+#         f"{'$'+str(round(price, 2)):>10s} {change:>10.2f}")
+
+# portfoliodate = read_portfolio(FILE_PORTFOLIODATE)
+# report = make_report(portfoliodate, prices)
+
+# print('\nReport:')
+# print('{:>10s} {:>10s} {:>10s} {:>10s}'\
+#     .format('Name', 'Shares', 'Price', 'Change'))
+# print(('-'*10+' ')*4)
+# for name, shares, price, change in report:
+#     print(f"{name:>10s} {shares:>10d}",
+#         f"{'$'+str(round(price, 2)):>10s} {change:>10.2f}")
+
+
+###############################################################################
+# Exercise 3.1: Structuring a program as a collection of functions
+# Modify your report.py program so that all major operations, including
+# calculations and output, are carried out by a collection of functions.
+# Specifically:
+#     - Create a function print_report(report) that prints out the report.
+#     - Change the last part of the program so that it is nothing more than a
+#     series of function calls and no other computation.
+#------------------------------------------------------------------------------
+
+# import os.path
+# import csv
+
+
+# def read_portfolio(filename: str) -> list:
+#     '''Read a portfolio file'''
+#     portfolio_ = []
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         headers = next(rows)
+#         for rowno, row in enumerate(rows, start=2):
+#             try:
+#                 i = headers.index('shares')
+#                 j = headers.index('price')
+#                 row[i] = int(row[i])
+#                 row[j] = float(row[j])
+#             except (ValueError, IndexError) as err:
+#                 print(f'\nWarning: {err}',
+#                       f'\n  File \"{filename}\", line {rowno}',
+#                       f'\n    ({row})')
+#                 continue
+#             record = dict(zip(headers, row))
+#             portfolio_.append(record)
+#     return portfolio_
+
+
+# def read_prices(filename: str) -> dict:
+#     '''Read a prices file'''
+#     prices_ = {}
+#     with open(filename, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         for rowno, row in enumerate(rows, start=1):
+#             try:
+#                 prices_[row[0]] = float(row[1])
+#             except IndexError as err:
+#                 print(f'\nWarning: {err}',
+#                       f'\n  File \"{filename}\", line {rowno}',
+#                       f'\n    ({row})')
+#     return prices_
+
+
+# def make_report(portfolio_: list, prices_: dict) -> list:
+#     '''Make report'''
+#     res = []
+#     for stock in portfolio_:
+#         try:
+#             res.append((stock['name'], stock['shares'], prices_[stock['name']],
+#                         round(prices_[stock['name']]-stock['price'], 2)))
+#         except KeyError as err:
+#             print(f'\nWarning: {err}',
+#                   f'\n  ({stock})')
+#     return res
+
+
+# def print_report(report_: list):
+#     print('\nReport:')
+#     print('{:>10s} {:>10s} {:>10s} {:>10s}'\
+#         .format('Name', 'Shares', 'Price', 'Change'))
+#     print(('-'*10+' ')*4)
+#     for name, shares, price, change in report_:
+#         print(f"{name:>10s} {shares:>10d}",
+#             f"{'$'+str(round(price, 2)):>10s} {change:>10.2f}")
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+# FILE_PORTFOLIODATE = BASE + 'Data/portfoliodate.csv'
+# FILE_PRICES = BASE + 'Data/prices.csv'
+
+# prices = read_prices(FILE_PRICES)
+
+# portfolio = read_portfolio(FILE_PORTFOLIO)
+# report = make_report(portfolio, prices)
+# print_report(report)
+
+
+# portfoliodate = read_portfolio(FILE_PORTFOLIODATE)
+# report = make_report(portfoliodate, prices)
+# print_report(report)
+
+
+###############################################################################
+# Exercise 3.2: Creating a top-level function for program execution
+# Take the last part of your program and package it into a single function
+# portfolio_report(portfolio_filename, prices_filename). Have the function work
+# so that the following function call creates the report as before:
+
+#     portfolio_report('Data/portfolio.csv', 'Data/prices.csv')
+
+# In this final version, your program will be nothing more than a series of
+# function definitions followed by a single function call to portfolio_report()
+# at the very end (which executes all of the steps involved in the program).
+
+# By turning your program into a single function, it becomes easy to run it on
+# different inputs. For example, try these statements interactively after
+# running your program:
+
+# >>> portfolio_report('Data/portfolio2.csv', 'Data/prices.csv')
+# ... look at the output ...
+# >>> files = ['Data/portfolio.csv', 'Data/portfolio2.csv']
+# >>> for name in files:
+#         print(f'{name:-^43s}')
+#         portfolio_report(name, 'Data/prices.csv')
+#         print()
+
+# ... look at the output ...
+# >>>
+#------------------------------------------------------------------------------
+
 import os.path
 import csv
 
@@ -735,36 +938,32 @@ def make_report(portfolio_: list, prices_: dict) -> list:
     return res
 
 
+def print_report(report_: list):
+    print('\nReport:')
+    print('{:>10s} {:>10s} {:>10s} {:>10s}'\
+        .format('Name', 'Shares', 'Price', 'Change'))
+    print(('-'*10+' ')*4)
+    for name, shares, price, change in report_:
+        print(f"{name:>10s} {shares:>10d}",
+            f"{'$'+str(round(price, 2)):>10s} {change:>10.2f}")
+
+
+def portfolio_report(portfolio_filename, prices_filename):
+    portfolio_ = read_portfolio(portfolio_filename)
+    prices_ = read_prices(prices_filename)
+    report_ = make_report(portfolio_, prices_)
+    print_report(report_)
+
+
 BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
 FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
 FILE_PORTFOLIODATE = BASE + 'Data/portfoliodate.csv'
 FILE_PRICES = BASE + 'Data/prices.csv'
 
-prices = read_prices(FILE_PRICES)
+portfolio_report(FILE_PORTFOLIO, FILE_PRICES)
 
-portfolio = read_portfolio(FILE_PORTFOLIO)
-report = make_report(portfolio, prices)
-
-print('\nReport:')
-print('{:>10s} {:>10s} {:>10s} {:>10s}'\
-    .format('Name', 'Shares', 'Price', 'Change'))
-print(('-'*10+' ')*4)
-for name, shares, price, change in report:
-    print(f"{name:>10s} {shares:>10d}",
-        f"{'$'+str(round(price, 2)):>10s} {change:>10.2f}")
-
-portfoliodate = read_portfolio(FILE_PORTFOLIODATE)
-report = make_report(portfoliodate, prices)
-
-print('\nReport:')
-print('{:>10s} {:>10s} {:>10s} {:>10s}'\
-    .format('Name', 'Shares', 'Price', 'Change'))
-print(('-'*10+' ')*4)
-for name, shares, price, change in report:
-    print(f"{name:>10s} {shares:>10d}",
-        f"{'$'+str(round(price, 2)):>10s} {change:>10.2f}")
+portfolio_report(FILE_PORTFOLIODATE, FILE_PRICES)
 
 
 ###############################################################################
-
 ###############################################################################
