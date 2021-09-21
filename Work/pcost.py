@@ -423,22 +423,66 @@
 # that it produces the same answer as before.
 #------------------------------------------------------------------------------
 
+# import sys
+# import os.path
+# import csv
+
+
+# def portfolio_cost(file_name: str) -> float:
+#     total = 0.0
+#     with open(file_name, 'rt') as fi:
+#         rows = csv.reader(fi)
+#         headers = next(rows)
+#         for rowno, row in enumerate(rows, start=2):
+#             record = dict(zip(headers, row))
+#             try:
+#                 total += int(record['shares']) * float(record['price'])
+#             except ValueError as err:
+#                 print(f"\nWarning: {err} (line {rowno}) ({row})")
+#     return total
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PATH = BASE + 'Data/portfolio.csv'
+
+# if len(sys.argv) == 2:
+#     filename = BASE + sys.argv[1]
+# else:
+#     filename = FILE_PATH
+
+# total_cost = portfolio_cost(filename)
+# print('\nTotal cost:', total_cost)
+
+# filename = BASE + 'Data/portfoliodate.csv'
+# total_cost = portfolio_cost(filename)
+# print('\nTotal cost:', total_cost)
+
+
+###############################################################################
+# Exercise 3.14: Using more library imports
+# In section 1, you wrote a program pcost.py that read a portfolio and computed
+# its cost.
+
+# >>> import pcost
+# >>> pcost.portfolio_cost('Data/portfolio.csv')
+# 44671.15
+# >>>
+
+# Modify the pcost.py file so that it uses the report.read_portfolio()
+# function.
+#------------------------------------------------------------------------------
+
 import sys
 import os.path
-import csv
+
+from report import read_portfolio
 
 
 def portfolio_cost(file_name: str) -> float:
     total = 0.0
-    with open(file_name, 'rt') as fi:
-        rows = csv.reader(fi)
-        headers = next(rows)
-        for rowno, row in enumerate(rows, start=2):
-            record = dict(zip(headers, row))
-            try:
-                total += int(record['shares']) * float(record['price'])
-            except ValueError as err:
-                print(f"\nWarning: {err} (line {rowno}) ({row})")
+    records = read_portfolio(file_name)
+    for rec in records:
+        total += rec['shares'] * rec['price']
     return total
 
 
@@ -459,5 +503,4 @@ print('\nTotal cost:', total_cost)
 
 
 ###############################################################################
-
 ###############################################################################
