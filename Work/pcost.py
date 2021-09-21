@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """ pcost.py
 """
 
@@ -472,7 +473,63 @@
 # function.
 #------------------------------------------------------------------------------
 
-import sys
+# import sys
+# import os.path
+
+# from report import read_portfolio
+
+
+# def portfolio_cost(file_name: str) -> float:
+#     total = 0.0
+#     records = read_portfolio(file_name)
+#     for rec in records:
+#         total += rec['shares'] * rec['price']
+#     return total
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PATH = BASE + 'Data/portfolio.csv'
+
+# if len(sys.argv) == 2:
+#     filename = BASE + sys.argv[1]
+# else:
+#     filename = FILE_PATH
+
+# total_cost = portfolio_cost(filename)
+# print('\nTotal cost:', total_cost)
+
+# filename = BASE + 'Data/portfoliodate.csv'
+# total_cost = portfolio_cost(filename)
+# print('\nTotal cost:', total_cost)
+
+
+###############################################################################
+# Exercise 3.15: main() functions
+# In the file report.py add a main() function that accepts a list of command
+# line options and produces the same output as before. You should be able to
+# run it interatively like this:
+
+# >>> import report
+# >>> report.main(['report.py', 'Data/portfolio.csv', 'Data/prices.csv'])
+#       Name     Shares      Price     Change
+# ---------- ---------- ---------- ----------
+#         AA        100       9.22     -22.98
+#        IBM         50     106.28      15.18
+#        CAT        150      35.46     -47.98
+#       MSFT        200      20.89     -30.34
+#         GE         95      13.48     -26.89
+#       MSFT         50      20.89     -44.21
+#        IBM        100     106.28      35.84
+# >>>
+
+# Modify the pcost.py file so that it has a similar main() function:
+
+# >>> import pcost
+# >>> pcost.main(['pcost.py', 'Data/portfolio.csv'])
+# Total cost: 44671.15
+# >>>
+#------------------------------------------------------------------------------
+
 import os.path
 
 from report import read_portfolio
@@ -486,21 +543,44 @@ def portfolio_cost(file_name: str) -> float:
     return total
 
 
-BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
-FILE_PATH = BASE + 'Data/portfolio.csv'
+def main(argv: list):
+    BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+    FILE_PATH = BASE + 'Data/portfolio.csv'
 
-if len(sys.argv) == 2:
-    filename = BASE + sys.argv[1]
-else:
-    filename = FILE_PATH
+    if len(argv) == 2:
+        filename = BASE + sys.argv[1]
+    else:
+        filename = FILE_PATH
 
-total_cost = portfolio_cost(filename)
-print('\nTotal cost:', total_cost)
+    total_cost = portfolio_cost(filename)
+    print('\nTotal cost:', total_cost)
 
-filename = BASE + 'Data/portfoliodate.csv'
-total_cost = portfolio_cost(filename)
-print('\nTotal cost:', total_cost)
+    filename = BASE + 'Data/portfoliodate.csv'
+    total_cost = portfolio_cost(filename)
+    print('\nTotal cost:', total_cost)
+
+
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)
 
 
 ###############################################################################
+# Exercise 3.16: Making Scripts
+# Modify the report.py and pcost.py programs so that they can execute as a
+# script on the command line:
+
+# bash $ python3 report.py Data/portfolio.csv Data/prices.csv
+#       Name     Shares      Price     Change
+# ---------- ---------- ---------- ----------
+#         AA        100       9.22     -22.98
+#        IBM         50     106.28      15.18
+#        CAT        150      35.46     -47.98
+#       MSFT        200      20.89     -30.34
+#         GE         95      13.48     -26.89
+#       MSFT         50      20.89     -44.21
+#        IBM        100     106.28      35.84
+
+# bash $ python3 pcost.py Data/portfolio.csv
+# Total cost: 44671.15
 ###############################################################################

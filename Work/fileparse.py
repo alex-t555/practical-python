@@ -760,50 +760,51 @@ def parse_csv(filename: str,
     return records
 
 
-BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
-FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
-FILE_PORTFOLIO_DAT = BASE + 'Data/portfolio.dat'
-FILE_MISSING = BASE + 'Data/missing.csv'
-FILE_PRICES = BASE + 'Data/prices.csv'
+if __name__ == '__main__':
+    BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+    FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+    FILE_PORTFOLIO_DAT = BASE + 'Data/portfolio.dat'
+    FILE_MISSING = BASE + 'Data/missing.csv'
+    FILE_PRICES = BASE + 'Data/prices.csv'
 
-print('\nPortfolio:')
-portfolio = parse_csv(FILE_PORTFOLIO)
-pprint(portfolio)
+    print('\nPortfolio:')
+    portfolio = parse_csv(FILE_PORTFOLIO)
+    pprint(portfolio)
 
-print('\nPortfolio:')
-portfolio = parse_csv(FILE_PORTFOLIO, select=['name','price'])
-pprint(portfolio)
+    print('\nPortfolio:')
+    portfolio = parse_csv(FILE_PORTFOLIO, select=['name','price'])
+    pprint(portfolio)
 
-print('\nPortfolio:')
-portfolio = parse_csv(FILE_PORTFOLIO, types=[str,int,float])
-pprint(portfolio)
+    print('\nPortfolio:')
+    portfolio = parse_csv(FILE_PORTFOLIO, types=[str,int,float])
+    pprint(portfolio)
 
-print('\nPrices:')
-prices = parse_csv(FILE_PRICES, types=[str,float], has_headers=False)
-pprint(prices)
-
-print('\nPortfolio:')
-portfolio = parse_csv(FILE_PORTFOLIO_DAT,
-                      types=[str,int,float],
-                      delimiter=' ')
-pprint(portfolio)
-
-print('\nPrices:')
-try:
-    prices = parse_csv(FILE_PRICES, select=['name','price'], has_headers=False)
-except RuntimeError as err:
-    print(f'\nError: in parse_csv(...), {err}\n')
-else:
+    print('\nPrices:')
+    prices = parse_csv(FILE_PRICES, types=[str,float], has_headers=False)
     pprint(prices)
 
+    print('\nPortfolio:')
+    portfolio = parse_csv(FILE_PORTFOLIO_DAT,
+                        types=[str,int,float],
+                        delimiter=' ')
+    pprint(portfolio)
 
-print('\nPortfolio:')
-portfolio = parse_csv(FILE_MISSING, types=[str,int,float])
-pprint(portfolio)
+    print('\nPrices:')
+    try:
+        prices = parse_csv(FILE_PRICES, select=['name','price'], has_headers=False)
+    except RuntimeError as err:
+        print(f'\nError: in parse_csv(...), {err}\n')
+    else:
+        pprint(prices)
 
-print('\nPortfolio:')
-portfolio = parse_csv(FILE_MISSING, types=[str,int,float], silence_errors=True)
-pprint(portfolio)
+
+    print('\nPortfolio:')
+    portfolio = parse_csv(FILE_MISSING, types=[str,int,float])
+    pprint(portfolio)
+
+    print('\nPortfolio:')
+    portfolio = parse_csv(FILE_MISSING, types=[str,int,float], silence_errors=True)
+    pprint(portfolio)
 
 
 ###############################################################################
