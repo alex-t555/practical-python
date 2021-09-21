@@ -403,6 +403,315 @@
 # >>>
 #------------------------------------------------------------------------------
 
+# import os.path
+# import csv
+# from pprint import pprint
+
+
+# def parse_csv(filename: str,
+#               select: list=None,
+#               types: list=None,
+#               has_headers: bool=True,
+#               delimiter: str=',') -> list:
+#     """Parse a CSV file into a list of records"""
+#     records = []
+#     with open(filename, newline='') as fi:
+#         rows = csv.reader(fi, delimiter=delimiter)
+#         indices = []
+#         if has_headers:
+#             headers = next(rows)
+#             if select:
+#                 indices = [headers.index(s) for s in select]
+#                 headers = [headers[j] for j in indices]
+#         for row in rows:
+#             if not row:
+#                 continue
+#             if indices:
+#                 row = [row[i] for i in indices]
+#             if types:
+#                 row = [func(val) for func, val in zip(types, row)]
+#             if has_headers:
+#                 record = dict(zip(headers, row))
+#             else:
+#                 record = tuple(row)
+#             records.append(record)
+#     return records
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+# FILE_PORTFOLIO_DAT = BASE + 'Data/portfolio.dat'
+# FILE_PRICES = BASE + 'Data/prices.csv'
+
+# portfolio = parse_csv(FILE_PORTFOLIO)
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# portfolio = parse_csv(FILE_PORTFOLIO, select=['name', 'price'])
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# portfolio = parse_csv(FILE_PORTFOLIO, types=[str, int, float])
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# portfolio = parse_csv(FILE_PRICES, types=[str, float], has_headers=False)
+# print('\nPrices:')
+# pprint(portfolio)
+
+# portfolio = parse_csv(FILE_PORTFOLIO_DAT,
+#                       types=[str, int, float],
+#                       delimiter=' ')
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+
+###############################################################################
+# Exercise 3.8: Raising exceptions
+# The parse_csv() function you wrote in the last section allows user-specified
+# columns to be selected, but that only works if the input data file has column
+# headers.
+
+# Modify the code so that an exception gets raised if both the select and
+# has_headers=False arguments are passed. For example:
+
+# >>> parse_csv('Data/prices.csv', select=['name','price'], has_headers=False)
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+#   File "fileparse.py", line 9, in parse_csv
+#     raise RuntimeError("select argument requires column headers")
+# RuntimeError: select argument requires column headers
+# >>>
+
+# Having added this one check, you might ask if you should be performing other
+# kinds of sanity checks in the function. For example, should you check that
+# the filename is a string, that types is a list, or anything of that nature?
+
+# As a general rule, it’s usually best to skip such tests and to just let the
+# program fail on bad inputs. The traceback message will point at the source of
+# the problem and can assist in debugging.
+
+# The main reason for adding the above check is to avoid running the code in a
+# non-sensical mode (e.g., using a feature that requires column headers, but
+# simultaneously specifying that there are no headers).
+
+# This indicates a programming error on the part of the calling code. Checking
+# for cases that “aren’t supposed to happen” is often a good idea.
+#------------------------------------------------------------------------------
+
+# import os.path
+# import csv
+# from pprint import pprint
+
+
+# def parse_csv(filename: str,
+#               select: list=None,
+#               types: list=None,
+#               has_headers: bool=True,
+#               delimiter: str=',') -> list:
+#     """Parse a CSV file into a list of records"""
+#     if select and not has_headers:
+#         raise RuntimeError('select argument requires column headers')
+#     records = []
+#     with open(filename, newline='') as fi:
+#         rows = csv.reader(fi, delimiter=delimiter)
+#         indices = []
+#         if has_headers:
+#             headers = next(rows)
+#             if select:
+#                 indices = [headers.index(s) for s in select]
+#                 headers = [headers[j] for j in indices]
+#         for row in rows:
+#             if not row:
+#                 continue
+#             if indices:
+#                 row = [row[i] for i in indices]
+#             if types:
+#                 row = [func(val) for func, val in zip(types, row)]
+#             if has_headers:
+#                 record = dict(zip(headers, row))
+#             else:
+#                 record = tuple(row)
+#             records.append(record)
+#     return records
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+# FILE_PORTFOLIO_DAT = BASE + 'Data/portfolio.dat'
+# FILE_PRICES = BASE + 'Data/prices.csv'
+
+# portfolio = parse_csv(FILE_PORTFOLIO)
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# portfolio = parse_csv(FILE_PORTFOLIO, select=['name', 'price'])
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# portfolio = parse_csv(FILE_PORTFOLIO, types=[str, int, float])
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# prices = parse_csv(FILE_PRICES, types=[str, float], has_headers=False)
+# print('\nPrices:')
+# pprint(prices)
+
+# portfolio = parse_csv(FILE_PORTFOLIO_DAT,
+#                       types=[str, int, float],
+#                       delimiter=' ')
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# try:
+#     prices = parse_csv(FILE_PRICES, select=['name','price'], has_headers=False)
+# except RuntimeError as err:
+#     print(f'\nError: in parse_csv(...), {err}')
+# else:
+#     print('\nPrices:')
+#     pprint(prices)
+
+
+###############################################################################
+# Exercise 3.9: Catching exceptions
+# The parse_csv() function you wrote is used to process the entire contents of
+# a file. However, in the real-world, it’s possible that input files might have
+# corrupted, missing, or dirty data. Try this experiment:
+
+# >>> portfolio = parse_csv('Data/missing.csv', types=[str, int, float])
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+#   File "fileparse.py", line 36, in parse_csv
+#     row = [func(val) for func, val in zip(types, row)]
+# ValueError: invalid literal for int() with base 10: ''
+# >>>
+
+# Modify the parse_csv() function to catch all ValueError exceptions generated
+# during record creation and print a warning message for rows that can’t be
+# converted.
+
+# The message should include the row number and information about the reason
+# why it failed. To test your function, try reading the file Data/missing.csv
+# above. For example:
+
+# >>> portfolio = parse_csv('Data/missing.csv', types=[str, int, float])
+# Row 4: Couldn't convert ['MSFT', '', '51.23']
+# Row 4: Reason invalid literal for int() with base 10: ''
+# Row 7: Couldn't convert ['IBM', '', '70.44']
+# Row 7: Reason invalid literal for int() with base 10: ''
+# >>>
+# >>> portfolio
+# [{'price': 32.2, 'name': 'AA', 'shares': 100}, {'price': 91.1, 'name': 'IBM',
+# 'shares': 50}, {'price': 83.44, 'name': 'CAT', 'shares': 150}, {'price':
+# 40.37, 'name': 'GE', 'shares': 95}, {'price': 65.1, 'name': 'MSFT', 'shares':
+# 50}]
+# >>>
+#------------------------------------------------------------------------------
+
+# import os.path
+# import csv
+# from pprint import pprint
+
+
+# def parse_csv(filename: str,
+#               select: list=None,
+#               types: list=None,
+#               has_headers: bool=True,
+#               delimiter: str=',') -> list:
+#     """Parse a CSV file into a list of records"""
+#     if select and not has_headers:
+#         raise RuntimeError('select argument requires column headers')
+#     records = []
+#     with open(filename, newline='') as fi:
+#         rows = csv.reader(fi, delimiter=delimiter)
+#         indices = []
+#         headers = []
+#         if has_headers:
+#             headers = next(rows)
+#             if select:
+#                 indices = [headers.index(s) for s in select]
+#                 headers = [headers[j] for j in indices]
+#         for rowno, row in enumerate(rows, start=2):
+#             if not row:
+#                 continue
+#             if indices:
+#                 row = [row[i] for i in indices]
+#             if types:
+#                 try:
+#                     row = [func(val) for func, val in zip(types, row)]
+#                 except ValueError as e:
+#                     print(f'Row {rowno}: Could not convert {row}')
+#                     print(f'Row {rowno}: Reason {e}')
+#                     continue
+#             if has_headers:
+#                 record = dict(zip(headers, row))
+#             else:
+#                 record = tuple(row)
+#             records.append(record)
+#     return records
+
+
+# BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+# FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+# FILE_PORTFOLIO_DAT = BASE + 'Data/portfolio.dat'
+# FILE_MISSING = BASE + 'Data/missing.csv'
+# FILE_PRICES = BASE + 'Data/prices.csv'
+
+# portfolio = parse_csv(FILE_PORTFOLIO)
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# portfolio = parse_csv(FILE_PORTFOLIO, select=['name', 'price'])
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# portfolio = parse_csv(FILE_PORTFOLIO, types=[str, int, float])
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# prices = parse_csv(FILE_PRICES, types=[str, float], has_headers=False)
+# print('\nPrices:')
+# pprint(prices)
+
+# portfolio = parse_csv(FILE_PORTFOLIO_DAT,
+#                       types=[str, int, float],
+#                       delimiter=' ')
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+# try:
+#     prices = parse_csv(FILE_PRICES, select=['name','price'], has_headers=False)
+# except RuntimeError as err:
+#     print(f'\nError: in parse_csv(...), {err}')
+# else:
+#     print('\nPrices:')
+#     pprint(prices)
+
+
+# portfolio = parse_csv(FILE_MISSING, types=[str, int, float])
+# print('\nPortfolio:')
+# pprint(portfolio)
+
+
+###############################################################################
+# Exercise 3.10: Silencing Errors
+# Modify the parse_csv() function so that parsing error messages can be
+# silenced if explicitly desired by the user. For example:
+
+# >>> portfolio = parse_csv('Data/missing.csv', types=[str,int,float],
+# silence_errors=True)
+# >>> portfolio
+# [{'price': 32.2, 'name': 'AA', 'shares': 100}, {'price': 91.1, 'name': 'IBM',
+# 'shares': 50}, {'price': 83.44, 'name': 'CAT', 'shares': 150}, {'price':
+# 40.37, 'name': 'GE', 'shares': 95}, {'price': 65.1, 'name': 'MSFT', 'shares':
+# 50}]
+# >>>
+# Error handling is one of the most difficult things to get right in most
+# programs. As a general rule, you shouldn’t silently ignore errors. Instead,
+# it’s better to report problems and to give the user an option to the silence
+# the error message if they choose to do so.
+#------------------------------------------------------------------------------
+
 import os.path
 import csv
 from pprint import pprint
@@ -412,24 +721,37 @@ def parse_csv(filename: str,
               select: list=None,
               types: list=None,
               has_headers: bool=True,
-              delimiter: str=',') -> list:
+              delimiter: str=',',
+              silence_errors: bool=False) -> list:
     """Parse a CSV file into a list of records"""
+    if select and not has_headers:
+        raise RuntimeError('select argument requires column headers')
     records = []
     with open(filename, newline='') as fi:
         rows = csv.reader(fi, delimiter=delimiter)
         indices = []
+        headers = []
+        lineno = 0
         if has_headers:
             headers = next(rows)
+            lineno = 1
             if select:
                 indices = [headers.index(s) for s in select]
                 headers = [headers[j] for j in indices]
         for row in rows:
+            lineno += 1
             if not row:
                 continue
             if indices:
                 row = [row[i] for i in indices]
             if types:
-                row = [func(val) for func, val in zip(types, row)]
+                try:
+                    row = [func(val) for func, val in zip(types, row)]
+                except ValueError as e:
+                    if not silence_errors:
+                        print(f'Row {lineno}: Could not convert {row}')
+                        print(f'Row {lineno}: Reason {e}')
+                    continue
             if has_headers:
                 record = dict(zip(headers, row))
             else:
@@ -441,28 +763,46 @@ def parse_csv(filename: str,
 BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
 FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
 FILE_PORTFOLIO_DAT = BASE + 'Data/portfolio.dat'
+FILE_MISSING = BASE + 'Data/missing.csv'
 FILE_PRICES = BASE + 'Data/prices.csv'
 
+print('\nPortfolio:')
 portfolio = parse_csv(FILE_PORTFOLIO)
-print('\nPortfolio:')
 pprint(portfolio)
 
-portfolio = parse_csv(FILE_PORTFOLIO, select=['name', 'price'])
 print('\nPortfolio:')
+portfolio = parse_csv(FILE_PORTFOLIO, select=['name','price'])
 pprint(portfolio)
 
-portfolio = parse_csv(FILE_PORTFOLIO, types=[str, int, float])
 print('\nPortfolio:')
+portfolio = parse_csv(FILE_PORTFOLIO, types=[str,int,float])
 pprint(portfolio)
 
-portfolio = parse_csv(FILE_PRICES, types=[str, float], has_headers=False)
 print('\nPrices:')
+prices = parse_csv(FILE_PRICES, types=[str,float], has_headers=False)
+pprint(prices)
+
+print('\nPortfolio:')
+portfolio = parse_csv(FILE_PORTFOLIO_DAT,
+                      types=[str,int,float],
+                      delimiter=' ')
 pprint(portfolio)
 
-portfolio = parse_csv(FILE_PORTFOLIO_DAT,
-                      types=[str, int, float],
-                      delimiter=' ')
+print('\nPrices:')
+try:
+    prices = parse_csv(FILE_PRICES, select=['name','price'], has_headers=False)
+except RuntimeError as err:
+    print(f'\nError: in parse_csv(...), {err}\n')
+else:
+    pprint(prices)
+
+
 print('\nPortfolio:')
+portfolio = parse_csv(FILE_MISSING, types=[str,int,float])
+pprint(portfolio)
+
+print('\nPortfolio:')
+portfolio = parse_csv(FILE_MISSING, types=[str,int,float], silence_errors=True)
 pprint(portfolio)
 
 
