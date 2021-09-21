@@ -1072,6 +1072,106 @@
 # >>>
 #------------------------------------------------------------------------------
 
+# import os.path
+
+# from fileparse import parse_csv
+
+
+# def read_portfolio(filename: str) -> list:
+#     '''Read a portfolio file'''
+#     return parse_csv(filename,
+#                      select=['name','shares','price'],
+#                      types=[str,int,float])
+
+
+# def read_prices(filename: str) -> dict:
+#     '''Read a prices file'''
+#     return dict(parse_csv(filename, types=[str,float], has_headers=False))
+
+
+# def make_report(portfolio_: list, prices_: dict) -> list:
+#     '''Make report'''
+#     res = []
+#     for stock in portfolio_:
+#         try:
+#             res.append((stock['name'], stock['shares'], prices_[stock['name']],
+#                         round(prices_[stock['name']]-stock['price'], 2)))
+#         except KeyError as err:
+#             print(f'\nWarning: {err}',
+#                   f'\n  ({stock})')
+#     return res
+
+
+# def print_report(report_: list):
+#     print('\nReport:')
+#     print('{:>10s} {:>10s} {:>10s} {:>10s}'\
+#         .format('Name', 'Shares', 'Price', 'Change'))
+#     print(('-'*10+' ')*4)
+#     for name, shares, price, change in report_:
+#         print(f"{name:>10s} {shares:>10d}",
+#             f"{'$'+str(round(price, 2)):>10s} {change:>10.2f}")
+
+
+# def portfolio_report(portfolio_filename, prices_filename):
+#     portfolio_ = read_portfolio(portfolio_filename)
+#     prices_ = read_prices(prices_filename)
+#     report_ = make_report(portfolio_, prices_)
+#     print_report(report_)
+
+
+# def main(argv: list):
+#     BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+#     FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+#     FILE_PORTFOLIODATE = BASE + 'Data/portfoliodate.csv'
+#     FILE_PRICES = BASE + 'Data/prices.csv'
+
+#     if len(argv) == 3:
+#         file_portfolio = BASE + argv[1]
+#         file_price = BASE + argv[2]
+#     else:
+#         file_portfolio = FILE_PORTFOLIO
+#         file_price = FILE_PRICES
+
+#     portfolio_report(file_portfolio, file_price)
+
+#     portfolio_report(FILE_PORTFOLIODATE, file_price)
+
+
+# if __name__ == '__main__':
+#     import sys
+#     main(sys.argv)
+
+
+###############################################################################
+# Exercise 3.16: Making Scripts
+# Modify the report.py and pcost.py programs so that they can execute as a
+# script on the command line:
+
+# bash $ python3 report.py Data/portfolio.csv Data/prices.csv
+#       Name     Shares      Price     Change
+# ---------- ---------- ---------- ----------
+#         AA        100       9.22     -22.98
+#        IBM         50     106.28      15.18
+#        CAT        150      35.46     -47.98
+#       MSFT        200      20.89     -30.34
+#         GE         95      13.48     -26.89
+#       MSFT         50      20.89     -44.21
+#        IBM        100     106.28      35.84
+
+# bash $ python3 pcost.py Data/portfolio.csv
+# Total cost: 44671.15
+###############################################################################
+
+
+
+###############################################################################
+# Exercise 3.18: Fixing existing functions
+# Fix the read_portfolio() and read_prices() functions in the report.py file so
+# that they work with the modified version of parse_csv(). This should only
+# involve a minor modification. Afterwards, your report.py and pcost.py
+# programs should work the same way they always did.
+#------------------------------------------------------------------------------
+
 import os.path
 
 from fileparse import parse_csv
@@ -1079,14 +1179,18 @@ from fileparse import parse_csv
 
 def read_portfolio(filename: str) -> list:
     '''Read a portfolio file'''
-    return parse_csv(filename,
-                     select=['name','shares','price'],
-                     types=[str,int,float])
+    with open(filename) as fi:
+        rec = parse_csv(fi,
+                        select=['name','shares','price'],
+                        types=[str,int,float])
+    return rec
 
 
 def read_prices(filename: str) -> dict:
     '''Read a prices file'''
-    return dict(parse_csv(filename, types=[str,float], has_headers=False))
+    with open(filename) as fi:
+        rec = dict(parse_csv(fi, types=[str,float], has_headers=False))
+    return rec
 
 
 def make_report(portfolio_: list, prices_: dict) -> list:
@@ -1143,21 +1247,4 @@ if __name__ == '__main__':
 
 
 ###############################################################################
-# Exercise 3.16: Making Scripts
-# Modify the report.py and pcost.py programs so that they can execute as a
-# script on the command line:
-
-# bash $ python3 report.py Data/portfolio.csv Data/prices.csv
-#       Name     Shares      Price     Change
-# ---------- ---------- ---------- ----------
-#         AA        100       9.22     -22.98
-#        IBM         50     106.28      15.18
-#        CAT        150      35.46     -47.98
-#       MSFT        200      20.89     -30.34
-#         GE         95      13.48     -26.89
-#       MSFT         50      20.89     -44.21
-#        IBM        100     106.28      35.84
-
-# bash $ python3 pcost.py Data/portfolio.csv
-# Total cost: 44671.15
 ###############################################################################
