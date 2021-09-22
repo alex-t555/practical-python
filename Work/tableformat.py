@@ -329,13 +329,132 @@
 # Try calling the function with different formats to make sure it’s working.
 #------------------------------------------------------------------------------
 
+# class TableFormatter:
+
+#     def headings(self, headers):
+#         """Emit the table headings."""
+#         raise NotImplementedError()
+
+#     def row(self, rowdata):
+#         """Emit a single row of table data."""
+#         raise NotImplementedError()
+
+
+# class TextTableFormatter(TableFormatter):
+#     """Emit a table in plan-text format."""
+
+#     def headings(self, headers):
+#         for h in headers:
+#             print(f'{h:>10s}', end=' ')
+#         print()
+#         print(('-'*10 + ' ') * len(headers))
+
+#     def row(self, rowdata):
+#         for r in rowdata:
+#             print(f'{r:>10s}', end=' ')
+#         print()
+
+
+# class CSVTableFormatter(TableFormatter):
+#     """Output portfolio data in CSV format."""
+
+#     def headings(self, headers):
+#         print(','.join(headers))
+
+#     def row(self, rowdata):
+#         print(','.join(rowdata))
+
+
+# class HTMLTableFormatter(TableFormatter):
+#     """Output portfolio data in HTML format."""
+
+#     def headings(self, headers):
+#         print('<tr>', end='')
+#         for h in headers:
+#             print(f'<th>{h:s}</th>', end='')
+#         print('</tr>')
+
+#     def row(self, rowdata):
+#         print('<tr>', end='')
+#         for r in rowdata:
+#             print(f'<td>{r:s}</td>', end='')
+#         print('</tr>')
+
+
+# def create_formatter(fmt: str) -> TableFormatter:
+#     if fmt == 'txt':
+#         formatter = TextTableFormatter()
+#     elif fmt == 'html':
+#         formatter = HTMLTableFormatter()
+#     elif fmt == 'csv':
+#         formatter = CSVTableFormatter()
+#     else:
+#         raise RuntimeError(f'Unknown format {fmt}')
+#     return formatter
+
+
+###############################################################################
+# Exercise 4.10: An example of using getattr()
+# getattr() is an alternative mechanism for reading attributes. It can be used
+# to write extremely flexible code. To begin, try this example:
+
+# >>> import stock
+# >>> s = stock.Stock('GOOG', 100, 490.1)
+# >>> columns = ['name', 'shares']
+# >>> for colname in columns:
+#         print(colname, '=', getattr(s, colname))
+
+# name = GOOG
+# shares = 100
+# >>>
+
+# Carefully observe that the output data is determined entirely by the
+# attribute names listed in the columns variable.
+
+# In the file tableformat.py, take this idea and expand it into a generalized
+# function print_table() that prints a table showing user-specified attributes
+# of a list of arbitrary objects. As with the earlier print_report() function,
+# print_table() should also accept a TableFormatter instance to control the
+# output format. Here’s how it should work:
+
+# >>> import report
+# >>> portfolio = report.read_portfolio('Data/portfolio.csv')
+# >>> from tableformat import create_formatter, print_table
+# >>> formatter = create_formatter('txt')
+# >>> print_table(portfolio, ['name','shares'], formatter)
+#       name     shares
+# ---------- ----------
+#         AA        100
+#        IBM         50
+#        CAT        150
+#       MSFT        200
+#         GE         95
+#       MSFT         50
+#        IBM        100
+
+# >>> print_table(portfolio, ['name','shares','price'], formatter)
+#       name     shares      price
+# ---------- ---------- ----------
+#         AA        100       32.2
+#        IBM         50       91.1
+#        CAT        150      83.44
+#       MSFT        200      51.23
+#         GE         95      40.37
+#       MSFT         50       65.1
+#        IBM        100      70.44
+# >>>
+#------------------------------------------------------------------------------
+
+from typing import List
+
+
 class TableFormatter:
 
-    def headings(self, headers):
+    def headings(self, headers: List[str]):
         """Emit the table headings."""
         raise NotImplementedError()
 
-    def row(self, rowdata):
+    def row(self, rowdata: List[str]):
         """Emit a single row of table data."""
         raise NotImplementedError()
 
@@ -391,6 +510,13 @@ def create_formatter(fmt: str) -> TableFormatter:
     else:
         raise RuntimeError(f'Unknown format {fmt}')
     return formatter
+
+
+def print_table(table: List[object], columns: List[str], formatter: TableFormatter):
+    formatter.headings(columns)
+    for row in table:
+        rowdata = [str(getattr(row, col)) for col in columns]
+        formatter.row(rowdata)
 
 
 ###############################################################################

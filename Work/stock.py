@@ -90,6 +90,39 @@
 # >>>
 #------------------------------------------------------------------------------
 
+# class Stock:
+#     def __init__(self, name, shares, price):
+#         self.name = name
+#         self.shares = shares
+#         self.price = price
+
+#     def sell(self, nshares):
+#         self.shares -= nshares
+
+#     def cost(self):
+#         return self.shares * self.price
+
+
+###############################################################################
+# Exercise 4.9: Better output for printing objects
+# Modify the Stock object that you defined in stock.py so that the __repr__()
+# method produces more useful output. For example:
+
+# >>> goog = Stock('GOOG', 100, 490.1)
+# >>> goog
+# Stock('GOOG', 100, 490.1)
+# >>>
+
+# See what happens when you read a portfolio of stocks and view the resulting
+# list after you have made these changes. For example:
+
+# >>> import report
+# >>> portfolio = report.read_portfolio('Data/portfolio.csv')
+# >>> portfolio
+# ... see what the output is ...
+# >>>
+#------------------------------------------------------------------------------
+
 class Stock:
     def __init__(self, name, shares, price):
         self.name = name
@@ -101,6 +134,9 @@ class Stock:
 
     def cost(self):
         return self.shares * self.price
+
+    def __repr__(self):
+        return f"Stock('{self.name}', {self.shares:d}, {self.price:.2f})"
 
 
 ###############################################################################
