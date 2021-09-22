@@ -530,6 +530,92 @@
 # >>>
 #------------------------------------------------------------------------------
 
+# import os.path
+
+# from report import read_portfolio
+
+
+# def portfolio_cost(file_name: str) -> float:
+#     total = 0.0
+#     records = read_portfolio(file_name)
+#     for rec in records:
+#         total += rec['shares'] * rec['price']
+#     return total
+
+
+# def main(argv: list):
+#     BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+#     FILE_PATH = BASE + 'Data/portfolio.csv'
+
+#     if len(argv) == 2:
+#         filename = BASE + sys.argv[1]
+#     else:
+#         filename = FILE_PATH
+
+#     total_cost = portfolio_cost(filename)
+#     print('\nTotal cost:', total_cost)
+
+#     filename = BASE + 'Data/portfoliodate.csv'
+#     total_cost = portfolio_cost(filename)
+#     print('\nTotal cost:', total_cost)
+
+
+# if __name__ == '__main__':
+#     import sys
+#     main(sys.argv)
+
+
+###############################################################################
+# Exercise 3.16: Making Scripts
+# Modify the report.py and pcost.py programs so that they can execute as a
+# script on the command line:
+
+# bash $ python3 report.py Data/portfolio.csv Data/prices.csv
+#       Name     Shares      Price     Change
+# ---------- ---------- ---------- ----------
+#         AA        100       9.22     -22.98
+#        IBM         50     106.28      15.18
+#        CAT        150      35.46     -47.98
+#       MSFT        200      20.89     -30.34
+#         GE         95      13.48     -26.89
+#       MSFT         50      20.89     -44.21
+#        IBM        100     106.28      35.84
+
+# bash $ python3 pcost.py Data/portfolio.csv
+# Total cost: 44671.15
+###############################################################################
+
+
+
+###############################################################################
+# Exercise 4.4: Using your class
+# Modify the read_portfolio() function in the report.py program so that it
+# reads a portfolio into a list of Stock instances as just shown in Exercise
+# 4.3. Once you have done that, fix all of the code in report.py and pcost.py
+# so that it works with Stock instances instead of dictionaries.
+
+# Hint: You should not have to make major changes to the code. You will mainly
+# be changing dictionary access such as s['shares'] into s.shares.
+
+# You should be able to run your functions the same as before:
+
+# >>> import pcost
+# >>> pcost.portfolio_cost('Data/portfolio.csv')
+# 44671.15
+# >>> import report
+# >>> report.portfolio_report('Data/portfolio.csv', 'Data/prices.csv')
+#       Name     Shares      Price     Change
+# ---------- ---------- ---------- ----------
+#         AA        100       9.22     -22.98
+#        IBM         50     106.28      15.18
+#        CAT        150      35.46     -47.98
+#       MSFT        200      20.89     -30.34
+#         GE         95      13.48     -26.89
+#       MSFT         50      20.89     -44.21
+#        IBM        100     106.28      35.84
+# >>>
+#------------------------------------------------------------------------------
+
 import os.path
 
 from report import read_portfolio
@@ -538,8 +624,8 @@ from report import read_portfolio
 def portfolio_cost(file_name: str) -> float:
     total = 0.0
     records = read_portfolio(file_name)
-    for rec in records:
-        total += rec['shares'] * rec['price']
+    for stock in records:
+        total += stock.shares * stock.price
     return total
 
 
@@ -566,21 +652,4 @@ if __name__ == '__main__':
 
 
 ###############################################################################
-# Exercise 3.16: Making Scripts
-# Modify the report.py and pcost.py programs so that they can execute as a
-# script on the command line:
-
-# bash $ python3 report.py Data/portfolio.csv Data/prices.csv
-#       Name     Shares      Price     Change
-# ---------- ---------- ---------- ----------
-#         AA        100       9.22     -22.98
-#        IBM         50     106.28      15.18
-#        CAT        150      35.46     -47.98
-#       MSFT        200      20.89     -30.34
-#         GE         95      13.48     -26.89
-#       MSFT         50      20.89     -44.21
-#        IBM        100     106.28      35.84
-
-# bash $ python3 pcost.py Data/portfolio.csv
-# Total cost: 44671.15
 ###############################################################################

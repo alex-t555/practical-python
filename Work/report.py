@@ -1172,9 +1172,109 @@
 # programs should work the same way they always did.
 #------------------------------------------------------------------------------
 
+# import os.path
+
+# from fileparse import parse_csv
+
+
+# def read_portfolio(filename: str) -> list:
+#     '''Read a portfolio file'''
+#     with open(filename) as fi:
+#         rec = parse_csv(fi,
+#                         select=['name','shares','price'],
+#                         types=[str,int,float])
+#     return rec
+
+
+# def read_prices(filename: str) -> dict:
+#     '''Read a prices file'''
+#     with open(filename) as fi:
+#         rec = dict(parse_csv(fi, types=[str,float], has_headers=False))
+#     return rec
+
+
+# def make_report(portfolio_: list, prices_: dict) -> list:
+#     '''Make report'''
+#     res = []
+#     for stock in portfolio_:
+#         try:
+#             res.append((stock['name'], stock['shares'], prices_[stock['name']],
+#                         round(prices_[stock['name']]-stock['price'], 2)))
+#         except KeyError as err:
+#             print(f'\nWarning: {err}',
+#                   f'\n  ({stock})')
+#     return res
+
+
+# def print_report(report_: list):
+#     print('\nReport:')
+#     print('{:>10s} {:>10s} {:>10s} {:>10s}'\
+#         .format('Name', 'Shares', 'Price', 'Change'))
+#     print(('-'*10+' ')*4)
+#     for name, shares, price, change in report_:
+#         print(f"{name:>10s} {shares:>10d}",
+#             f"{'$'+str(round(price, 2)):>10s} {change:>10.2f}")
+
+
+# def portfolio_report(portfolio_filename, prices_filename):
+#     portfolio_ = read_portfolio(portfolio_filename)
+#     prices_ = read_prices(prices_filename)
+#     report_ = make_report(portfolio_, prices_)
+#     print_report(report_)
+
+
+# def main(argv: list):
+#     BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+#     FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+#     FILE_PORTFOLIODATE = BASE + 'Data/portfoliodate.csv'
+#     FILE_PRICES = BASE + 'Data/prices.csv'
+
+#     if len(argv) == 3:
+#         file_portfolio = BASE + argv[1]
+#         file_price = BASE + argv[2]
+#     else:
+#         file_portfolio = FILE_PORTFOLIO
+#         file_price = FILE_PRICES
+
+#     portfolio_report(file_portfolio, file_price)
+
+#     portfolio_report(FILE_PORTFOLIODATE, file_price)
+
+
+# if __name__ == '__main__':
+#     import sys
+#     main(sys.argv)
+
+
+###############################################################################
+# Exercise 4.4: Using your class
+# Modify the read_portfolio() function in the report.py program so that it reads a portfolio into a list of Stock instances as just shown in Exercise 4.3. Once you have done that, fix all of the code in report.py and pcost.py so that it works with Stock instances instead of dictionaries.
+
+# Hint: You should not have to make major changes to the code. You will mainly be changing dictionary access such as s['shares'] into s.shares.
+
+# You should be able to run your functions the same as before:
+
+# >>> import pcost
+# >>> pcost.portfolio_cost('Data/portfolio.csv')
+# 44671.15
+# >>> import report
+# >>> report.portfolio_report('Data/portfolio.csv', 'Data/prices.csv')
+#       Name     Shares      Price     Change
+# ---------- ---------- ---------- ----------
+#         AA        100       9.22     -22.98
+#        IBM         50     106.28      15.18
+#        CAT        150      35.46     -47.98
+#       MSFT        200      20.89     -30.34
+#         GE         95      13.48     -26.89
+#       MSFT         50      20.89     -44.21
+#        IBM        100     106.28      35.84
+# >>>
+#------------------------------------------------------------------------------
+
 import os.path
 
 from fileparse import parse_csv
+from stock import Stock
 
 
 def read_portfolio(filename: str) -> list:
@@ -1183,7 +1283,7 @@ def read_portfolio(filename: str) -> list:
         rec = parse_csv(fi,
                         select=['name','shares','price'],
                         types=[str,int,float])
-    return rec
+    return [ Stock(d['name'], d['shares'], d['price']) for d in rec ]
 
 
 def read_prices(filename: str) -> dict:
@@ -1198,8 +1298,8 @@ def make_report(portfolio_: list, prices_: dict) -> list:
     res = []
     for stock in portfolio_:
         try:
-            res.append((stock['name'], stock['shares'], prices_[stock['name']],
-                        round(prices_[stock['name']]-stock['price'], 2)))
+            res.append((stock.name, stock.shares, prices_[stock.name],
+                        round(prices_[stock.name]-stock.price, 2)))
         except KeyError as err:
             print(f'\nWarning: {err}',
                   f'\n  ({stock})')
