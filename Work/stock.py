@@ -123,15 +123,175 @@
 # >>>
 #------------------------------------------------------------------------------
 
+# class Stock:
+#     def __init__(self, name, shares, price):
+#         self.name = name
+#         self.shares = shares
+#         self.price = price
+
+#     def sell(self, nshares):
+#         self.shares -= nshares
+
+#     def cost(self):
+#         return self.shares * self.price
+
+#     def __repr__(self):
+#         return f"Stock('{self.name}', {self.shares:d}, {self.price:.2f})"
+
+
+###############################################################################
+# Exercise 5.6: Simple Properties
+# Properties are a useful way to add “computed attributes” to an object. In
+# stock.py, you created an object Stock. Notice that on your object there is a
+# slight inconsistency in how different kinds of data are extracted:
+
+# >>> from stock import Stock
+# >>> s = Stock('GOOG', 100, 490.1)
+# >>> s.shares
+# 100
+# >>> s.price
+# 490.1
+# >>> s.cost()
+# 49010.0
+# >>>
+
+# Specifically, notice how you have to add the extra () to cost because it is a
+# method.
+
+# You can get rid of the extra () on cost() if you turn it into a property.
+# Take your Stock class and modify it so that the cost calculation works like
+# this:
+
+# >>> ================================ RESTART ================================
+# >>> from stock import Stock
+# >>> s = Stock('GOOG', 100, 490.1)
+# >>> s.cost
+# 49010.0
+# >>>
+
+# Try calling s.cost() as a function and observe that it doesn’t work now that
+# cost has been defined as a property.
+
+# >>> s.cost()
+# ... fails ...
+# >>>
+
+# Making this change will likely break your earlier pcost.py program. You might
+# need to go back and get rid of the () on the cost() method.
+#------------------------------------------------------------------------------
+
+# class Stock:
+#     def __init__(self, name, shares, price):
+#         self.name = name
+#         self.shares = shares
+#         self.price = price
+
+#     def sell(self, nshares):
+#         self.shares -= nshares
+
+#     @property
+#     def cost(self):
+#         return self.shares * self.price
+
+#     def __repr__(self):
+#         return f"Stock('{self.name}', {self.shares:d}, {self.price:.2f})"
+
+
+###############################################################################
+# Exercise 5.7: Properties and Setters
+# Modify the shares attribute so that the value is stored in a private
+# attribute and that a pair of property functions are used to ensure that it is
+# always set to an integer value. Here is an example of the expected behavior:
+
+# >>> ================================ RESTART ================================
+# >>> from stock import Stock
+# >>> s = Stock('GOOG',100,490.10)
+# >>> s.shares = 50
+# >>> s.shares = 'a lot'
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+# TypeError: expected an integer
+# >>>
+#------------------------------------------------------------------------------
+
+# class Stock:
+#     def __init__(self, name, shares, price):
+#         self.name = name
+#         self.shares = shares
+#         self.price = price
+
+#     @property
+#     def shares(self):
+#         return self._shares
+
+#     @shares.setter
+#     def shares(self, value):
+#         if not isinstance(value, int):
+#             raise TypeError('expected an int')
+#         self._shares = value
+
+#     def sell(self, nshares):
+#         self.shares -= nshares
+
+#     @property
+#     def cost(self):
+#         return self.shares * self.price
+
+#     def __repr__(self):
+#         return f"Stock('{self.name}', {self.shares:d}, {self.price:.2f})"
+
+
+###############################################################################
+# Exercise 5.8: Adding slots
+# Modify the Stock class so that it has a __slots__ attribute. Then, verify
+# that new attributes can’t be added:
+
+# >>> ================================ RESTART ================================
+# >>> from stock import Stock
+# >>> s = Stock('GOOG', 100, 490.10)
+# >>> s.name
+# 'GOOG'
+# >>> s.blah = 42
+# ... see what happens ...
+# >>>
+
+# When you use __slots__, Python uses a more efficient internal representation
+# of objects. What happens if you try to inspect the underlying dictionary of s
+# above?
+
+# >>> s.__dict__
+# ... see what happens ...
+# >>>
+
+# It should be noted that __slots__ is most commonly used as an optimization on
+# classes that serve as data structures. Using slots will make such programs
+# use far-less memory and run a bit faster. You should probably avoid __slots__
+# on most other classes however.
+#------------------------------------------------------------------------------
+
 class Stock:
+
+    __slots__ = ('name', '_shares', 'price')
+
     def __init__(self, name, shares, price):
         self.name = name
         self.shares = shares
         self.price = price
 
+    @property
+    def shares(self):
+        return self._shares
+
+    @shares.setter
+    def shares(self, value):
+        if not isinstance(value, int):
+            raise TypeError('expected an int')
+        self._shares = value
+
     def sell(self, nshares):
         self.shares -= nshares
 
+    @property
     def cost(self):
         return self.shares * self.price
 

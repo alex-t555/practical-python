@@ -616,6 +616,72 @@
 # >>>
 #------------------------------------------------------------------------------
 
+# import os.path
+
+# from report import read_portfolio
+
+
+# def portfolio_cost(file_name: str) -> float:
+#     total = 0.0
+#     records = read_portfolio(file_name)
+#     for stock in records:
+#         total += stock.shares * stock.price
+#     return total
+
+
+# def main(argv: list):
+#     BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+#     FILE_PATH = BASE + 'Data/portfolio.csv'
+
+#     if len(argv) == 2:
+#         filename = BASE + sys.argv[1]
+#     else:
+#         filename = FILE_PATH
+
+#     total_cost = portfolio_cost(filename)
+#     print('\nTotal cost:', total_cost)
+
+#     filename = BASE + 'Data/portfoliodate.csv'
+#     total_cost = portfolio_cost(filename)
+#     print('\nTotal cost:', total_cost)
+
+
+# if __name__ == '__main__':
+#     import sys
+#     main(sys.argv)
+
+
+###############################################################################
+# Exercise 5.6: Simple Properties
+# Properties are a useful way to add “computed attributes” to an object. In stock.py, you created an object Stock. Notice that on your object there is a slight inconsistency in how different kinds of data are extracted:
+
+# >>> from stock import Stock
+# >>> s = Stock('GOOG', 100, 490.1)
+# >>> s.shares
+# 100
+# >>> s.price
+# 490.1
+# >>> s.cost()
+# 49010.0
+# >>>
+# Specifically, notice how you have to add the extra () to cost because it is a method.
+
+# You can get rid of the extra () on cost() if you turn it into a property. Take your Stock class and modify it so that the cost calculation works like this:
+
+# >>> ================================ RESTART ================================
+# >>> from stock import Stock
+# >>> s = Stock('GOOG', 100, 490.1)
+# >>> s.cost
+# 49010.0
+# >>>
+# Try calling s.cost() as a function and observe that it doesn’t work now that cost has been defined as a property.
+
+# >>> s.cost()
+# ... fails ...
+# >>>
+# Making this change will likely break your earlier pcost.py program. You might need to go back and get rid of the () on the cost() method.
+#------------------------------------------------------------------------------
+
 import os.path
 
 from report import read_portfolio
@@ -625,7 +691,7 @@ def portfolio_cost(file_name: str) -> float:
     total = 0.0
     records = read_portfolio(file_name)
     for stock in records:
-        total += stock.shares * stock.price
+        total += stock.cost
     return total
 
 
