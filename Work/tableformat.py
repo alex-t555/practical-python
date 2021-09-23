@@ -445,6 +445,104 @@
 # >>>
 #------------------------------------------------------------------------------
 
+# from typing import List
+
+
+# class TableFormatter:
+
+#     def headings(self, headers: List[str]):
+#         """Emit the table headings."""
+#         raise NotImplementedError()
+
+#     def row(self, rowdata: List[str]):
+#         """Emit a single row of table data."""
+#         raise NotImplementedError()
+
+
+# class TextTableFormatter(TableFormatter):
+#     """Emit a table in plan-text format."""
+
+#     def headings(self, headers):
+#         for h in headers:
+#             print(f'{h:>10s}', end=' ')
+#         print()
+#         print(('-'*10 + ' ') * len(headers))
+
+#     def row(self, rowdata):
+#         for r in rowdata:
+#             print(f'{r:>10s}', end=' ')
+#         print()
+
+
+# class CSVTableFormatter(TableFormatter):
+#     """Output portfolio data in CSV format."""
+
+#     def headings(self, headers):
+#         print(','.join(headers))
+
+#     def row(self, rowdata):
+#         print(','.join(rowdata))
+
+
+# class HTMLTableFormatter(TableFormatter):
+#     """Output portfolio data in HTML format."""
+
+#     def headings(self, headers):
+#         print('<tr>', end='')
+#         for h in headers:
+#             print(f'<th>{h:s}</th>', end='')
+#         print('</tr>')
+
+#     def row(self, rowdata):
+#         print('<tr>', end='')
+#         for r in rowdata:
+#             print(f'<td>{r:s}</td>', end='')
+#         print('</tr>')
+
+
+# def create_formatter(fmt: str) -> TableFormatter:
+#     if fmt == 'txt':
+#         formatter = TextTableFormatter()
+#     elif fmt == 'html':
+#         formatter = HTMLTableFormatter()
+#     elif fmt == 'csv':
+#         formatter = CSVTableFormatter()
+#     else:
+#         raise RuntimeError(f'Unknown format {fmt}')
+#     return formatter
+
+
+# def print_table(table: List[object], columns: List[str], formatter: TableFormatter):
+#     formatter.headings(columns)
+#     for row in table:
+#         rowdata = [str(getattr(row, col)) for col in columns]
+#         formatter.row(rowdata)
+
+
+###############################################################################
+# Exercise 4.11: Defining a custom exception
+# It is often good practice for libraries to define their own exceptions.
+
+# This makes it easier to distinguish between Python exceptions raised in
+# response to common programming errors versus exceptions intentionally raised
+# by a library to a signal a specific usage problem.
+
+# Modify the create_formatter() function from the last exercise so that it
+# raises a custom FormatError exception when the user provides a bad format
+# name.
+
+# For example:
+
+# >>> from tableformat import create_formatter
+# >>> formatter = create_formatter('xls')
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+#   File "tableformat.py", line 71, in create_formatter
+#     raise FormatError('Unknown table format %s' % name)
+# FormatError: Unknown table format xls
+# >>>
+#------------------------------------------------------------------------------
+
 from typing import List
 
 
@@ -500,6 +598,10 @@ class HTMLTableFormatter(TableFormatter):
         print('</tr>')
 
 
+class FormatError(Exception):
+    pass
+
+
 def create_formatter(fmt: str) -> TableFormatter:
     if fmt == 'txt':
         formatter = TextTableFormatter()
@@ -508,7 +610,7 @@ def create_formatter(fmt: str) -> TableFormatter:
     elif fmt == 'csv':
         formatter = CSVTableFormatter()
     else:
-        raise RuntimeError(f'Unknown format {fmt}')
+        raise FormatError(f'Unknown table format {fmt}')
     return formatter
 
 
