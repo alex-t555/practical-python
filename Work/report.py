@@ -1881,20 +1881,205 @@
 # bash $
 #------------------------------------------------------------------------------
 
+# import os.path
+
+# from fileparse import parse_csv
+# from stock import Stock
+# from tableformat import TableFormatter, create_formatter
+
+
+# def read_portfolio(filename: str) -> list:
+#     '''Read a portfolio file'''
+#     with open(filename) as fi:
+#         rec = parse_csv(fi,
+#                         select=['name','shares','price'],
+#                         types=[str,int,float])
+#     return [ Stock(d['name'], d['shares'], d['price']) for d in rec ]
+
+
+# def read_prices(filename: str) -> dict:
+#     """Read a prices file"""
+#     with open(filename) as fi:
+#         rec = dict(parse_csv(fi, types=[str,float], has_headers=False))
+#     return rec
+
+
+# def make_report(portfolio_: list, prices_: dict) -> list:
+#     """Make report"""
+#     res = []
+#     for stock in portfolio_:
+#         try:
+#             res.append((stock.name, stock.shares, prices_[stock.name],
+#                         round(prices_[stock.name]-stock.price, 2)))
+#         except KeyError as err:
+#             print(f'\nWarning: {err}',
+#                   f'\n  ({stock})')
+#     return res
+
+
+# def print_report(report_: list, formatter: TableFormatter):
+#     """Print a nicely formated table from a list of (name, shares, price,
+#     change) tuples.
+#     """
+#     print('\nReport:')
+#     formatter.headings(['Name','Shares','Price','Change'])
+#     for name, shares, price, change in report_:
+#         rowdata = [name, str(shares), f'${price:0.2f}', f'{change:0.2f}']
+#         formatter.row(rowdata)
+
+
+# def portfolio_report(portfolio_filename: str,
+#                      prices_filename: str,
+#                      fmt: str='txt'):
+#     """Make a stock report given portfolio and price data files.
+#     """
+#     portfolio_ = read_portfolio(portfolio_filename)
+#     prices_ = read_prices(prices_filename)
+#     report_ = make_report(portfolio_, prices_)
+#     formatter = create_formatter(fmt)
+#     print_report(report_, formatter)
+
+
+# def main(argv: list):
+#     BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+#     FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+#     FILE_PORTFOLIODATE = BASE + 'Data/portfoliodate.csv'
+#     FILE_PRICES = BASE + 'Data/prices.csv'
+
+#     if len(argv) == 4:
+#         file_portfolio = BASE + argv[1]
+#         file_price = BASE + argv[2]
+#         fmt = argv[3]
+#     else:
+#         file_portfolio = FILE_PORTFOLIO
+#         file_price = FILE_PRICES
+#         fmt = 'txt'
+
+#     portfolio_report(file_portfolio, file_price, fmt)
+#     portfolio_report(FILE_PORTFOLIODATE, file_price, fmt)
+
+
+# if __name__ == '__main__':
+#     import sys
+#     main(sys.argv)
+
+
+###############################################################################
+# Exercise 6.2: Supporting Iteration
+# On occasion, you might want to make one of your own objects support
+# iteration–especially if your object wraps around an existing list or other
+# iterable. In a new file portfolio.py, define the following class:
+
+# # portfolio.py
+
+# class Portfolio:
+
+#     def __init__(self, holdings):
+#         self._holdings = holdings
+
+#     @property
+#     def total_cost(self):
+#         return sum([s.cost for s in self._holdings])
+
+#     def tabulate_shares(self):
+#         from collections import Counter
+#         total_shares = Counter()
+#         for s in self._holdings:
+#             total_shares[s.name] += s.shares
+#         return total_shares
+
+# This class is meant to be a layer around a list, but with some extra methods
+# such as the total_cost property. Modify the read_portfolio() function in
+# report.py so that it creates a Portfolio instance like this:
+
+# # report.py
+# ...
+
+# import fileparse
+# from stock import Stock
+# from portfolio import Portfolio
+
+# def read_portfolio(filename):
+#     '''
+#     Read a stock portfolio file into a list of dictionaries with keys
+#     name, shares, and price.
+#     '''
+#     with open(filename) as file:
+#         portdicts = fileparse.parse_csv(file,
+#                                         select=['name','shares','price'],
+#                                         types=[str,int,float])
+
+#     portfolio = [ Stock(d['name'], d['shares'], d['price']) for d in portdicts ]
+#     return Portfolio(portfolio)
+# ...
+
+# Try running the report.py program. You will find that it fails spectacularly
+# due to the fact that Portfolio instances aren’t iterable.
+
+# >>> import report
+# >>> report.portfolio_report('Data/portfolio.csv', 'Data/prices.csv')
+# ... crashes ...
+
+# Fix this by modifying the Portfolio class to support iteration:
+
+# class Portfolio:
+
+#     def __init__(self, holdings):
+#         self._holdings = holdings
+
+#     def __iter__(self):
+#         return self._holdings.__iter__()
+
+#     @property
+#     def total_cost(self):
+#         return sum([s.shares*s.price for s in self._holdings])
+
+#     def tabulate_shares(self):
+#         from collections import Counter
+#         total_shares = Counter()
+#         for s in self._holdings:
+#             total_shares[s.name] += s.shares
+#         return total_shares
+
+# After you’ve made this change, your report.py program should work again.
+# While you’re at it, fix up your pcost.py program to use the new Portfolio
+# object. Like this:
+
+# # pcost.py
+
+# import report
+
+# def portfolio_cost(filename):
+#     '''
+#     Computes the total cost (shares*price) of a portfolio file
+#     '''
+#     portfolio = report.read_portfolio(filename)
+#     return portfolio.total_cost
+# ...
+
+# Test it to make sure it works:
+
+# >>> import pcost
+# >>> pcost.portfolio_cost('Data/portfolio.csv')
+# 44671.15
+# >>>
+#------------------------------------------------------------------------------
+
 import os.path
 
 from fileparse import parse_csv
 from stock import Stock
 from tableformat import TableFormatter, create_formatter
+from portfolio import Portfolio
 
 
-def read_portfolio(filename: str) -> list:
+def read_portfolio(filename: str) -> Portfolio:
     '''Read a portfolio file'''
     with open(filename) as fi:
         rec = parse_csv(fi,
                         select=['name','shares','price'],
                         types=[str,int,float])
-    return [ Stock(d['name'], d['shares'], d['price']) for d in rec ]
+    return Portfolio([ Stock(d['name'], d['shares'], d['price']) for d in rec ])
 
 
 def read_prices(filename: str) -> dict:
