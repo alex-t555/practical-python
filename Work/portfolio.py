@@ -180,6 +180,56 @@
 # other kinds of operators is an important part of this.
 #------------------------------------------------------------------------------
 
+# from collections import Counter
+
+
+# class Portfolio:
+
+#     def __init__(self, holdings):
+#         self._holdings = holdings
+
+#     def __iter__(self):
+#         return self._holdings.__iter__()
+
+#     def __len__(self):
+#         return len(self._holdings)
+
+#     def __getitem__(self, index):
+#         return self._holdings[index]
+
+#     def __contains__(self, name):
+#         return any((s.name == name for s in self._holdings))
+
+#     @property
+#     def total_cost(self):
+#         return sum([stock.cost for stock in self._holdings])
+
+#     def tabulate_shares(self):
+#         total_shares = Counter()
+#         for stock in self._holdings:
+#             total_shares[stock.name] += stock.shares
+#         return total_shares
+
+
+###############################################################################
+# Exercise 6.14: Generator Expressions in Function Arguments
+# Generator expressions are sometimes placed into function arguments. It looks
+# a little weird at first, but try this experiment:
+
+# >>> nums = [1,2,3,4,5]
+# >>> sum([x*x for x in nums])    # A list comprehension
+# 55
+# >>> sum(x*x for x in nums)      # A generator expression
+# 55
+# >>>
+
+# In the above example, the second version using generators would use
+# significantly less memory if a large list was being manipulated.
+
+# In your portfolio.py file, you performed a few calculations involving list
+# comprehensions. Try replacing these with generator expressions.
+#------------------------------------------------------------------------------
+
 from collections import Counter
 
 
@@ -202,7 +252,7 @@ class Portfolio:
 
     @property
     def total_cost(self):
-        return sum([stock.cost for stock in self._holdings])
+        return sum((stock.cost for stock in self._holdings))
 
     def tabulate_shares(self):
         total_shares = Counter()

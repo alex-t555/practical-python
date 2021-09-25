@@ -215,6 +215,89 @@
 # ...
 #------------------------------------------------------------------------------
 
+# from typing import List, Dict, Generator
+# import os.path
+# import csv
+# import _csv
+
+# import follow
+# import report
+# import tableformat
+
+
+# def select_columns(rows_: _csv.reader,
+#                    indices: List[int]) -> Generator[List[str],None,None]:
+#     for row_ in rows_:
+#         yield [row_[index] for index in indices]
+
+
+# def convert_types(rows_: List[List[str]],
+#                   types: List[type]) -> Generator[List,None,None]:
+#     for row_ in rows_:
+#         yield [func(val) for func, val in zip(types, row_)]
+
+
+# def make_dicts(rows_: List,
+#                headers: List[str]) -> Generator[Dict,None,None]:
+#     for row_ in rows_:
+#         yield dict(zip(headers, row_))
+
+
+# def parse_stock_data(lines_: List[str]) -> List[Dict]:
+#     rows_ = csv.reader(lines_)
+#     rows_ = select_columns(rows_, [0,1,4])
+#     rows_ = convert_types(rows_, [str,float,float])
+#     rows_ = make_dicts(rows_, ['name','price','change'])
+#     return rows_
+
+
+# def filter_symbols(rows_: List[Dict],
+#                    names: List[str]) -> Generator[Dict,None,None]:
+#     for row_ in rows_:
+#         if row_['name'] in names:
+#             yield row_
+
+
+# def ticker(portfoliofile: str, logfile: str, fmt: str='txt'):
+#     portfolio = report.read_portfolio(portfoliofile)
+#     rows_ = parse_stock_data(follow.follow(logfile))
+#     rows_ = filter_symbols(rows_, portfolio)
+#     formatter = tableformat.create_formatter(fmt)
+#     headings = ['Name','Price','Change']
+#     formatter.headings(headings)
+#     for row_ in rows_:
+#         rowdata = [str(row_[key.lower()]) for key in headings]
+#         formatter.row(rowdata)
+
+
+# if __name__ == '__main__':
+
+#     BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+#     FILE_STOCKLOG = BASE + 'Data/stocklog.csv'
+
+#     lines = follow.follow(FILE_STOCKLOG)
+#     rows = parse_stock_data(lines)
+#     for row in rows:
+#         print(row)
+
+
+###############################################################################
+# Exercise 6.15: Code simplification
+# Generators expressions are often a useful replacement for small generator
+# functions. For example, instead of writing a function like this:
+
+# def filter_symbols(rows, names):
+#     for row in rows:
+#         if row['name'] in names:
+#             yield row
+
+# You could write something like this:
+
+# rows = (row for row in rows if row['name'] in names)
+
+# Modify the ticker.py program to use generator expressions as appropriate.
+#------------------------------------------------------------------------------
+
 from typing import List, Dict, Generator
 import os.path
 import csv
@@ -251,17 +334,10 @@ def parse_stock_data(lines_: List[str]) -> List[Dict]:
     return rows_
 
 
-def filter_symbols(rows_: List[Dict],
-                   names: List[str]) -> Generator[Dict,None,None]:
-    for row_ in rows_:
-        if row_['name'] in names:
-            yield row_
-
-
 def ticker(portfoliofile: str, logfile: str, fmt: str='txt'):
     portfolio = report.read_portfolio(portfoliofile)
     rows_ = parse_stock_data(follow.follow(logfile))
-    rows_ = filter_symbols(rows_, portfolio)
+    row_ = (row_ for row_ in rows_ if row_['name'] in portfolio)
     formatter = tableformat.create_formatter(fmt)
     headings = ['Name','Price','Change']
     formatter.headings(headings)
