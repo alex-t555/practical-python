@@ -833,11 +833,162 @@
 # Yes, you’ll need to be careful. Could you add a safety check to avoid this?
 #------------------------------------------------------------------------------
 
+# from typing import List
+# import os.path
+# import csv
+# from pprint import pprint
+
+
+# def parse_csv(file_: List,
+#               select: List=None,
+#               types: List=None,
+#               has_headers: bool=True,
+#               delimiter: str=',',
+#               silence_errors: bool=False) -> List:
+#     """Parse a CSV file into a list of records"""
+#     if isinstance(file_, str):
+#         raise RuntimeError('input sequence cannot be string')
+#     if select and not has_headers:
+#         raise RuntimeError('select argument requires column headers')
+#     records = []
+#     indices = []
+#     headers = []
+#     lineno = 0
+#     rows = csv.reader(file_, delimiter=delimiter)
+#     if has_headers:
+#         headers = next(rows)
+#         lineno = 1
+#         if select:
+#             indices = [headers.index(s) for s in select]
+#             headers = [headers[j] for j in indices]
+#     for row in rows:
+#         lineno += 1
+#         if not row:
+#             continue
+#         if indices:
+#             row = [row[i] for i in indices]
+#         if types:
+#             try:
+#                 row = [func(val) for func, val in zip(types, row)]
+#             except ValueError as e:
+#                 if not silence_errors:
+#                     print(f'Row {lineno}: Could not convert {row}')
+#                     print(f'Row {lineno}: Reason {e}')
+#                 continue
+#         if has_headers:
+#             record = dict(zip(headers, row))
+#         else:
+#             record = tuple(row)
+#         records.append(record)
+#     return records
+
+
+# if __name__ == '__main__':
+#     BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+#     FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+#     FILE_PORTFOLIO_DAT = BASE + 'Data/portfolio.dat'
+#     FILE_MISSING = BASE + 'Data/missing.csv'
+#     FILE_PRICES = BASE + 'Data/prices.csv'
+
+#     print('\nPortfolio:')
+#     with open(FILE_PORTFOLIO) as fi:
+#         portfolio = parse_csv(fi)
+#         pprint(portfolio)
+
+#     print('\nPortfolio:')
+#     with open(FILE_PORTFOLIO) as fi:
+#         portfolio = parse_csv(fi, select=['name','price'])
+#         pprint(portfolio)
+
+#     print('\nPortfolio:')
+#     with open(FILE_PORTFOLIO) as fi:
+#         portfolio = parse_csv(fi, types=[str,int,float])
+#         pprint(portfolio)
+
+#     print('\nPrices:')
+#     with open(FILE_PRICES) as fi:
+#         prices = parse_csv(fi, types=[str,float], has_headers=False)
+#         pprint(prices)
+
+#     print('\nPortfolio:')
+#     with open(FILE_PORTFOLIO_DAT) as fi:
+#         portfolio = parse_csv(fi, types=[str,int,float], delimiter=' ')
+#         pprint(portfolio)
+
+#     print('\nPrices:')
+#     with open(FILE_PRICES) as fi:
+#         try:
+#             prices = parse_csv(fi, select=['name','price'], has_headers=False)
+#         except RuntimeError as err:
+#             print(f'\nError: in parse_csv(...), {err}\n')
+#         else:
+#             pprint(prices)
+
+
+#     print('\nPortfolio:')
+#     with open(FILE_MISSING) as fi:
+#         portfolio = parse_csv(fi, types=[str,int,float])
+#         pprint(portfolio)
+
+#     print('\nPortfolio:')
+#     with open(FILE_MISSING) as fi:
+#         portfolio = parse_csv(fi, types=[str,int,float], silence_errors=True)
+#         pprint(portfolio)
+
+
+###############################################################################
+# Exercise 8.2: Adding logging to a module
+# In fileparse.py, there is some error handling related to exceptions caused by
+# bad input.
+
+# Notice the print statements that issue diagnostic messages. Replacing those
+# prints with logging operations is relatively simple.
+
+# Now that you’ve made these changes, try using some of your code on bad data.
+
+# >>> import report
+# >>> a = report.read_portfolio('Data/missing.csv')
+# Row 4: Bad row: ['MSFT', '', '51.23']
+# Row 7: Bad row: ['IBM', '', '70.44']
+# >>>
+
+# If you do nothing, you’ll only get logging messages for the WARNING level and
+# above. The output will look like simple print statements. However, if you
+# configure the logging module, you’ll get additional information about the
+# logging levels, module, and more. Type these steps to see that:
+
+# >>> import logging
+# >>> logging.basicConfig()
+# >>> a = report.read_portfolio('Data/missing.csv')
+# WARNING:fileparse:Row 4: Bad row: ['MSFT', '', '51.23']
+# WARNING:fileparse:Row 7: Bad row: ['IBM', '', '70.44']
+# >>>
+
+# You will notice that you don’t see the output from the log.debug() operation.
+# Type this to change the level.
+
+# >>> logging.getLogger('fileparse').level = logging.DEBUG
+# >>> a = report.read_portfolio('Data/missing.csv')
+# WARNING:fileparse:Row 4: Bad row: ['MSFT', '', '51.23']
+# DEBUG:fileparse:Row 4: Reason: invalid literal for int() with base 10: ''
+# WARNING:fileparse:Row 7: Bad row: ['IBM', '', '70.44']
+# DEBUG:fileparse:Row 7: Reason: invalid literal for int() with base 10: ''
+# >>>
+
+# Turn off all, but the most critical logging messages:
+
+# >>> logging.getLogger('fileparse').level=logging.CRITICAL
+# >>> a = report.read_portfolio('Data/missing.csv')
+# >>>
+#------------------------------------------------------------------------------
 from typing import List
 import os.path
 import csv
 from pprint import pprint
+import logging
 
+
+log = logging.getLogger(__name__)
 
 def parse_csv(file_: List,
               select: List=None,
@@ -872,8 +1023,8 @@ def parse_csv(file_: List,
                 row = [func(val) for func, val in zip(types, row)]
             except ValueError as e:
                 if not silence_errors:
-                    print(f'Row {lineno}: Could not convert {row}')
-                    print(f'Row {lineno}: Reason {e}')
+                    log.warning("Row %d: Couldn't convert %s", lineno, row)
+                    log.debug("Row %d: Reason %s", lineno, e)
                 continue
         if has_headers:
             record = dict(zip(headers, row))

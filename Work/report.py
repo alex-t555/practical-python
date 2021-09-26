@@ -2466,6 +2466,106 @@
 # use the class method.
 #------------------------------------------------------------------------------
 
+# from typing import Any
+# import os.path
+
+# from fileparse import parse_csv
+# from tableformat import TableFormatter, create_formatter
+# from portfolio import Portfolio
+
+
+# def read_portfolio(filename: str, **opts: Any) -> Portfolio:
+#     '''Read a portfolio file'''
+#     with open(filename) as file:
+#         return Portfolio.from_csv(file, **opts)
+
+
+# def read_prices(filename: str) -> dict:
+#     """Read a prices file"""
+#     with open(filename) as file:
+#         return dict(parse_csv(file, types=[str,float], has_headers=False))
+
+
+# def make_report(portfolio_: list, prices_: dict) -> list:
+#     """Make report"""
+#     res = []
+#     for stock in portfolio_:
+#         try:
+#             res.append((stock.name, stock.shares, prices_[stock.name],
+#                         round(prices_[stock.name]-stock.price, 2)))
+#         except KeyError as err:
+#             print(f'\nWarning: {err}',
+#                   f'\n  ({stock})')
+#     return res
+
+
+# def print_report(report_: list, formatter: TableFormatter):
+#     """Print a nicely formated table from a list of (name, shares, price,
+#     change) tuples.
+#     """
+#     print('\nReport:')
+#     formatter.headings(['Name','Shares','Price','Change'])
+#     for name, shares, price, change in report_:
+#         rowdata = [name, str(shares), f'${price:0.2f}', f'{change:0.2f}']
+#         formatter.row(rowdata)
+
+
+# def portfolio_report(portfolio_filename: str,
+#                      prices_filename: str,
+#                      fmt: str='txt'):
+#     """Make a stock report given portfolio and price data files.
+#     """
+#     portfolio_ = read_portfolio(portfolio_filename)
+#     prices_ = read_prices(prices_filename)
+#     report_ = make_report(portfolio_, prices_)
+#     formatter = create_formatter(fmt)
+#     print_report(report_, formatter)
+
+
+# def main(argv: list):
+#     BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
+#     FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
+#     FILE_PORTFOLIODATE = BASE + 'Data/portfoliodate.csv'
+#     FILE_PRICES = BASE + 'Data/prices.csv'
+
+#     if len(argv) == 4:
+#         file_portfolio = BASE + argv[1]
+#         file_price = BASE + argv[2]
+#         fmt = argv[3]
+#     else:
+#         file_portfolio = FILE_PORTFOLIO
+#         file_price = FILE_PRICES
+#         fmt = 'txt'
+
+#     portfolio_report(file_portfolio, file_price, fmt)
+#     portfolio_report(FILE_PORTFOLIODATE, file_price, fmt)
+
+
+# if __name__ == '__main__':
+#     import sys
+#     main(sys.argv)
+
+
+###############################################################################
+# Exercise 8.3: Adding Logging to a Program
+# To add logging to an application, you need to have some mechanism to
+# initialize the logging module in the main module. One way to do this is to
+# include some setup code that looks like this:
+
+# # This file sets up basic configuration of the logging module.
+# # Change settings here to adjust logging output as needed.
+
+# import logging
+# logging.basicConfig(
+#     filename = 'app.log',            # Name of the log file (omit to use stderr)
+#     filemode = 'w',                  # File mode (use 'a' to append)
+#     level    = logging.WARNING,      # Logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)
+# )
+
+# Again, you’d need to put this someplace in the startup steps of your program.
+# For example, where would you put this in your report.py program?
+#------------------------------------------------------------------------------
+
 from typing import Any
 import os.path
 
@@ -2523,6 +2623,12 @@ def portfolio_report(portfolio_filename: str,
 
 
 def main(argv: list):
+    logging.basicConfig(
+        filename='app.log',
+        filemode='w',
+        level=logging.WARNING
+    )
+
     BASE = os.path.dirname(os.path.abspath(__file__)) + '/'
     FILE_PORTFOLIO = BASE + 'Data/portfolio.csv'
     FILE_PORTFOLIODATE = BASE + 'Data/portfoliodate.csv'
@@ -2543,6 +2649,7 @@ def main(argv: list):
 
 if __name__ == '__main__':
     import sys
+    import logging
     main(sys.argv)
 
 
